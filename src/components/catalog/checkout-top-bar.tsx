@@ -1,10 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/components/ui/icons";
+import { siteConfig } from "@/config/site-config";
+import { BrandImage } from "@/components/media/brand-image";
 
 export function CheckoutTopBar() {
   const router = useRouter();
@@ -14,8 +15,8 @@ export function CheckoutTopBar() {
       <button type="button" className="catalog-topbar__back" aria-label="Volver a la pantalla anterior" onClick={() => router.back()}>
         <ArrowLeftIcon />
       </button>
-      <Link href="/" className="catalog-topbar__logo" aria-label="FUERZA, volver al inicio">
-        <Image src="/01-fuerza-logo.svg" alt="FUERZA" width={566} height={566} priority />
+      <Link href="/" className="catalog-topbar__logo" aria-label={`${siteConfig.brand.name}, volver al inicio`}>
+        <BrandImage src={siteConfig.brand.logo} fallbackSrc="/brand/logo/logo.svg" alt={siteConfig.brand.name} width={640} height={180} priority />
       </Link>
       <span className="catalog-topbar__spacer" aria-hidden="true" />
     </header>

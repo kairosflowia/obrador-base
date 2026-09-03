@@ -2,28 +2,28 @@ import { Container, Section } from "@/components/ui/layout";
 import { ContactForm } from "@/components/public/contact-form";
 import { PageIntro } from "@/components/public/page-intro";
 import { createPageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/config/site-config";
 
 export const metadata = createPageMetadata({
-  title: "Contacto",
-  description: "Información de contacto del obrador FUERZA en Asturias.",
+  title: siteConfig.content.contact.seo.title,
+  description: siteConfig.content.contact.seo.description,
   path: "/contacto",
 });
 
 export default function ContactoPage() {
+  const content = siteConfig.content.contact;
   return (
     <main id="main-content">
       <PageIntro
-        eyebrow="Hablemos"
-        title="Contacto"
-        description="Escríbenos para consultas generales, recogidas o colaboraciones. Te respondemos por correo."
+        {...content.intro}
       />
       <Section>
         <Container className="institutional-grid">
           <div className="prose-block">
-            <h2>Una pregunta cada vez</h2>
+            <h2>{content.body.title}</h2>
             <p>
-              Rellena el formulario con tu consulta y te contestaremos al correo que nos indiques. También puedes escribirnos directamente a{" "}
-              <a href="mailto:hola@fuerza.com">hola@fuerza.com</a>.
+              {content.body.description}
+              {siteConfig.business.email ? <> {content.body.emailPrefix}{" "}<a href={`mailto:${siteConfig.business.email}`}>{siteConfig.business.email}</a>.</> : null}
             </p>
           </div>
           <ContactForm />

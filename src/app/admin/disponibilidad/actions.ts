@@ -4,6 +4,7 @@ import { canManageAvailability } from "@/lib/auth/permissions";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import type { ProductionDateStatus } from "@/lib/supabase/database.types";
+import { assertNotDemoDestructive } from "@/lib/demo";
 
 export type AvailabilityActionState = { ok: boolean; message?: string; errors?: Record<string, string> };
 const text = (f: FormData, n: string) => String(f.get(n) ?? "").trim();
@@ -114,6 +115,7 @@ export async function createAvailabilityOverrideAction(_s: AvailabilityActionSta
 }
 
 export async function deleteAvailabilityOverrideAction(f: FormData) {
+  assertNotDemoDestructive();
   const { db } = await authorized();
   await db.from("availability_overrides").delete().eq("id", text(f, "id"));
   refresh();

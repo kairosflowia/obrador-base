@@ -1,3 +1,5 @@
+import { siteConfig } from "@/config/site-config";
+
 type LegalParagraphBlock = { heading: string; paragraphs: readonly string[] };
 type LegalPendingBlock = { heading: string; pending: true; note: string };
 export type LegalBlock = LegalParagraphBlock | LegalPendingBlock;
@@ -10,7 +12,7 @@ function content(blocks: readonly LegalBlock[]): readonly LegalBlock[] {
   return blocks;
 }
 
-const CONTACT_EMAIL = "hola@fuerza.com";
+const CONTACT_EMAIL = siteConfig.business.email || "la página de Contacto";
 
 const titularPending: LegalPendingBlock = {
   heading: "Titularidad del sitio",

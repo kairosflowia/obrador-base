@@ -1,8 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
+import { BrandImage } from "@/components/media/brand-image";
+import { siteConfig } from "@/config/site-config";
 import { useCart } from "@/components/cart/cart-provider";
 import { Badge } from "@/components/ui/badge";
 import { availabilityReasonLabel, type AvailabilityStatus } from "@/lib/availability-domain";
@@ -43,17 +44,14 @@ export function CatalogProductCard({
   return (
     <article className="catalog-product-card" data-selected={quantity > 0 || undefined}>
       <Link href={href} className="catalog-product-card__media" tabIndex={-1} aria-hidden="true">
-        {imagePath ? (
-          <Image
-            src={`/api/product-images/${imagePath}`}
-            alt=""
-            width={480}
-            height={480}
-            sizes="(min-width: 64rem) 25vw, (min-width: 48rem) 33vw, 50vw"
-          />
-        ) : (
-          <div className="catalog-image-empty" aria-hidden="true" />
-        )}
+        <BrandImage
+          src={imagePath ? `/api/product-images/${imagePath}` : null}
+          fallbackSrc={siteConfig.content.images.productFallback}
+          alt=""
+          width={480}
+          height={480}
+          sizes="(min-width: 64rem) 25vw, (min-width: 48rem) 33vw, 50vw"
+        />
       </Link>
       <div className="catalog-product-card__body">
         {familyName ? <p className="catalog-product-card__eyebrow">{familyName}</p> : null}
@@ -64,7 +62,7 @@ export function CatalogProductCard({
         ) : null}
         <Link href={href} className="catalog-product-card__name">{name}</Link>
         {priceCents !== null ? <p className="catalog-product-card__price">{formatPrice(priceCents)}</p> : null}
-        {variant && !soldOut ? (
+        {siteConfig.features.onlineOrders && variant && !soldOut ? (
           <div className="stepper stepper--compact catalog-product-card__stepper">
             <button
               type="button"

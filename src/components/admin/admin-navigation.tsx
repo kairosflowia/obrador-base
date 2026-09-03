@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState, type ReactElement, type SVGProps } from "react";
 
-import { adminNavigation, adminNavigationGroups, type AdminNavIcon } from "@/lib/navigation";
+import { adminNavigation, adminNavigationGroups, enabledAdminSections, type AdminNavIcon } from "@/lib/navigation";
+import { siteConfig } from "@/config/site-config";
 import { visibleAdminSections } from "@/lib/auth/permissions";
 import type { AppRole } from "@/lib/supabase/database.types";
 import {
@@ -54,7 +55,7 @@ const NAV_ICONS: Record<AdminNavIcon, (props: SVGProps<SVGSVGElement>) => ReactE
 
 function AdminLinks({ roles, onNavigate }: { roles: readonly AppRole[]; onNavigate?: () => void }) {
   const pathname = usePathname();
-  const sections = visibleAdminSections(roles, adminNavigation).filter((item) => !SECTIONS_NOT_READY.has(item.slug));
+  const sections = enabledAdminSections(visibleAdminSections(roles, adminNavigation)).filter((item) => !SECTIONS_NOT_READY.has(item.slug));
 
   return (
     <nav className="admin-nav" aria-label="Administración">
@@ -95,7 +96,7 @@ function AdminLinks({ roles, onNavigate }: { roles: readonly AppRole[]; onNaviga
 export function AdminSidebar({ roles }: { roles: readonly AppRole[] }) {
   return (
     <aside className="admin-sidebar">
-      <Link className="admin-brand" href="/admin">FUERZA <span>obrador</span></Link>
+      <Link className="admin-brand" href="/admin">{siteConfig.brand.shortName} <span>obrador</span></Link>
       <AdminLinks roles={roles} />
       <Link className="admin-back-link" href="/">Volver al portal</Link>
     </aside>
@@ -106,7 +107,7 @@ export function AdminMobileNavigation({ roles }: { roles: readonly AppRole[] }) 
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const primaryItems = visibleAdminSections(roles, adminNavigation)
+  const primaryItems = enabledAdminSections(visibleAdminSections(roles, adminNavigation))
     .filter((item) => !SECTIONS_NOT_READY.has(item.slug))
     .slice(0, 2);
 

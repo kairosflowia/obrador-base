@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { Alert } from "@/components/ui/alert";
@@ -8,11 +7,13 @@ import { WeeklySpecialBanner } from "@/components/public/weekly-special-banner";
 import { getPublicCatalog } from "@/lib/catalog";
 import { getCutoffConfig } from "@/lib/order-cutoff-server";
 import { createPageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/config/site-config";
+import { BrandImage } from "@/components/media/brand-image";
 import { getCurrentWeeklySpecial } from "@/lib/weekly-special";
 
 export const metadata = createPageMetadata({
-  title: "Reserva y recoge",
-  description: "Elige una categoría, después el producto y añádelo a tu pedido para recoger en el obrador.",
+  title: siteConfig.content.reservation.seo.title,
+  description: siteConfig.content.reservation.seo.description,
   path: "/reserva-y-recoge",
 });
 
@@ -27,7 +28,7 @@ export default async function ReservaYRecogePage() {
     <main id="main-content" className="catalog-layout">
       <div className="catalog-layout__main">
         <Container>
-          <Image className="reserva-brand" src="/nombre-fuerza.svg" alt="FUERZA" width={375} height={205} priority />
+          <BrandImage className="reserva-brand" src={siteConfig.brand.logo} fallbackSrc="/brand/logo/logo.svg" alt={siteConfig.brand.name} width={640} height={180} priority />
           {weeklySpecial ? <WeeklySpecialBanner special={weeklySpecial} /> : null}
           {families.length ? (
             <div className="category-grid">
@@ -37,9 +38,7 @@ export default async function ReservaYRecogePage() {
                 return (
                   <Link key={family.id} href={`/reserva-y-recoge/${family.slug}`} className="category-card">
                     <span className="category-card__image">
-                      {image ? (
-                        <Image src={`/api/product-images/${image.storage_path}`} alt="" width={200} height={200} />
-                      ) : null}
+                      <BrandImage src={image ? `/api/product-images/${image.storage_path}` : null} fallbackSrc={siteConfig.content.images.productFallback} alt="" width={200} height={200} />
                     </span>
                     <span className="category-card__body">
                       <span className="category-card__name">{family.name}</span>

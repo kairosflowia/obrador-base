@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
+import { siteConfig } from "@/config/site-config";
 
 export async function POST(req: Request) {
+  if (siteConfig.demoMode) return NextResponse.json({ error: "disabled_in_demo" }, { status: 409 });
   const user = (await (await createClient()).auth.getUser()).data.user;
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 

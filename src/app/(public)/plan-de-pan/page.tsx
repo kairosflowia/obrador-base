@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { SectionHeading } from "@/components/public/editorial";
+import { BrandImage } from "@/components/media/brand-image";
+import { siteConfig } from "@/config/site-config";
 import { PageIntro } from "@/components/public/page-intro";
 import { CalendarIcon, PackageIcon, WheatIcon } from "@/components/ui/icons";
 import { Container, Section } from "@/components/ui";
@@ -10,21 +11,18 @@ import { FREQUENCY_DESCRIPTIONS_ES, FREQUENCY_LABELS_ES, type SubscriptionFreque
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Fuerza Habitual",
-  description: "Suscríbete y recibe tu pan de masa madre sin tener que reservar cada vez.",
+  title: siteConfig.content.subscriptions.seo.title,
+  description: siteConfig.content.subscriptions.seo.description,
   path: "/plan-de-pan",
 });
 
-const STEPS = [
-  { icon: WheatIcon, title: "Elige tu pan", description: "Monta tu cesta con el pan de masa madre que quieras recibir dentro de Fuerza Habitual." },
-  { icon: CalendarIcon, title: "Define tu frecuencia", description: "Escoge la frecuencia que mejor se adapte a tu rutina: semanal, quincenal, cada 3 semanas o mensual." },
-  { icon: PackageIcon, title: "Recíbelo sin volver a pedir", description: "Tu pan queda reservado automáticamente según tu suscripción. Lo recoges en tu punto habitual, sin tener que reservar cada vez." },
-] as const;
+const STEP_ICONS = { grain: WheatIcon, calendar: CalendarIcon, package: PackageIcon } as const;
 
 const FREQUENCIES: SubscriptionFrequency[] = ["weekly", "biweekly", "every_3_weeks", "monthly"];
 const FEATURED_FREQUENCY: SubscriptionFrequency = "biweekly";
 
-export default function FuerzaHabitualLanding() {
+export default function PlanDePanLanding() {
+  const content = siteConfig.content.subscriptions;
   return (
     <main id="main-content">
       <Section>
@@ -32,16 +30,17 @@ export default function FuerzaHabitualLanding() {
           <div className="plan-hero">
             <div className="plan-hero__copy">
               <PageIntro
-                eyebrow="Fuerza Habitual"
-                title="¿Cómo funciona Fuerza Habitual?"
-                description="Suscríbete a la calidad artesanal. Recibe tu pan favorito con la frecuencia que decidas, sin complicaciones ni pedidos de último minuto."
+                eyebrow={content.intro.eyebrow}
+                title={content.intro.title}
+                description={content.intro.description}
               />
-              <Link className="button button--primary plan-hero__cta" href="/plan-de-pan/membresias">Configurar suscripción</Link>
+              <Link className="button button--primary plan-hero__cta" href="/plan-de-pan/membresias">{content.intro.action}</Link>
             </div>
             <div className="plan-hero__media">
-              <Image
-                src="https://images.unsplash.com/photo-1757606406505-8f7dfe834719?auto=format&fit=crop&w=1280&q=75"
-                alt="Panes de masa madre recién horneados junto a espigas de trigo"
+              <BrandImage
+                src={siteConfig.content.images.subscriptions}
+                fallbackSrc="/brand/institutional/institutional-placeholder.svg"
+                alt={content.intro.imageAlt}
                 width={1280}
                 height={960}
                 priority
@@ -53,25 +52,28 @@ export default function FuerzaHabitualLanding() {
 
       <Section tone="sunken">
         <Container size="wide">
-          <SectionHeading eyebrow="Así de simple" title="El proceso artesanal" />
+          <SectionHeading {...content.processHeading} />
           <div className="plan-steps">
-            {STEPS.map(({ icon: Icon, title, description }) => (
+            {content.steps.map(({ icon, title, description }) => {
+              const Icon = STEP_ICONS[icon];
+              return (
               <article key={title} className="plan-step">
                 <span className="plan-step__icon" aria-hidden="true"><Icon /></span>
                 <h3>{title}</h3>
                 <p>{description}</p>
               </article>
-            ))}
+              );
+            })}
           </div>
           <p>
-            <Link href="/donde-estamos">Ver puntos de recogida</Link>
+            <Link href="/donde-estamos">{content.pickupAction}</Link>
           </p>
         </Container>
       </Section>
 
       <Section>
         <Container size="wide">
-          <SectionHeading eyebrow="A tu ritmo" title="Elige tu frecuencia ideal" />
+          <SectionHeading {...content.frequencyHeading} />
           <div className="plan-frequency-grid">
             {FREQUENCIES.map((frequency) => {
               const featured = frequency === FEATURED_FREQUENCY;
@@ -97,12 +99,8 @@ export default function FuerzaHabitualLanding() {
 
       <Section tone="sunken">
         <Container size="wide">
-          <SectionHeading
-            eyebrow="Tu cesta, tu pan"
-            title="Conoce los panes disponibles en membresía"
-            description="Explora los panes disponibles en formato Fuerza Habitual y elige los que mejor se adapten a tu rutina. Con 4 unidades o más en tu cesta, el 5% de descuento se aplica automáticamente."
-          />
-          <Link className="button button--primary" href="/plan-de-pan/membresias">Ver membresías</Link>
+          <SectionHeading {...content.catalogHeading} />
+          <Link className="button button--primary" href="/plan-de-pan/membresias">{content.catalogAction}</Link>
         </Container>
       </Section>
     </main>

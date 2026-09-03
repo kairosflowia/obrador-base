@@ -6,6 +6,7 @@ import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-
 import { loadStripe } from "@stripe/stripe-js";
 
 import { Alert, Button, Checkbox, EmptyState, Input, Select } from "@/components/ui";
+import { siteConfig } from "@/config/site-config";
 import { TrashIcon } from "@/components/ui/icons";
 import { availabilityReasonLabel } from "@/lib/availability-domain";
 import { formatPrice } from "@/lib/catalog-domain";
@@ -14,10 +15,10 @@ import { PICKUP_DATE_COOKIE, PICKUP_POINT_COOKIE } from "@/lib/pickup-selection"
 
 import { useCart } from "./cart-provider";
 
-const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) : null;
+const stripePromise = !siteConfig.demoMode && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) : null;
 const appearance = {
   theme: "stripe" as const,
-  variables: { colorPrimary: "#e4572e", colorText: "#171412", borderRadius: "10px", fontFamily: "inherit" },
+  variables: { colorPrimary: siteConfig.brand.colors.primary, colorText: siteConfig.brand.colors.foreground, borderRadius: siteConfig.brand.radius.medium, fontFamily: siteConfig.brand.fonts.body },
 };
 
 function setCookie(name: string, value: string) {
@@ -159,7 +160,7 @@ export function CartPageClient({
   if (!cart.items.length) {
     return <EmptyState title="Tu cesta está vacía" description="Añade un pan publicado antes de continuar." action={<Link href="/reserva-y-recoge">Ver el catálogo</Link>} />;
   }
-  if (!stripePromise) {
+  if (!siteConfig.demoMode && !stripePromise) {
     return <Alert variant="error" title="Pago no disponible">El pago todavía no está configurado.</Alert>;
   }
 
@@ -187,6 +188,10 @@ export function CartPageClient({
         }),
       });
       const data = await response.json().catch(() => null);
+      if (response.ok && data?.demo && data?.publicCode && data?.lookupToken) {
+        window.location.assign(`/checkout/pago?pedido=${encodeURIComponent(data.publicCode)}&token=${encodeURIComponent(data.lookupToken)}`);
+        return;
+      }
       if (!response.ok || !data?.clientSecret) {
         setError(data?.error ? availabilityReasonLabel(data.error) : "No hemos podido reservar la disponibilidad. Inténtalo de nuevo.");
         return;
@@ -323,7 +328,7 @@ export function CartPageClient({
             />
             <Checkbox id="marketing" name="marketing" label="Quiero recibir novedades de FUERZA." />
 
-            <Button type="submit" fullWidth loading={busy} loadingLabel="Reservando…" disabled={!point || !date || hasSoldOutItem}>Pagar</Button>
+            <Button type="submit" fullWidth loading={busy} loadingLabel="Reservando…" disabled={!point || !date || hasSoldOutItem}>{siteConfig.demoMode ? "Simular pedido" : "Pagar"}</Button>
             {hasSoldOutItem ? <Alert variant="warning" title="Revisa tu cesta">Hay un artículo agotado para este punto y fecha. Elimínalo o cambia la fecha para continuar.</Alert> : null}
             {error ? <Alert variant="error" title="No se ha podido continuar">{error}</Alert> : null}
           </form>

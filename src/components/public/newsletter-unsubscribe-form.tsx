@@ -4,6 +4,7 @@ import { useActionState } from "react";
 
 import { unsubscribeNewsletterAction, type NewsletterActionState } from "@/app/(public)/newsletter/actions";
 import { Alert, Button, Textarea } from "@/components/ui";
+import { siteConfig } from "@/config/site-config";
 
 const initialState: NewsletterActionState = { status: "idle" };
 
@@ -17,7 +18,7 @@ export function NewsletterUnsubscribeForm({ token }: { token: string }) {
   return (
     <form action={formAction} className="auth-form">
       <input type="hidden" name="token" value={token} />
-      <Textarea id="newsletter-unsubscribe-reason" name="reason" label="¿Nos cuentas por qué te das de baja?" optional helpText="Solo lo verá el equipo de FUERZA." rows={3} />
+      <Textarea id="newsletter-unsubscribe-reason" name="reason" label="¿Nos cuentas por qué te das de baja?" optional helpText={`Solo lo verá el equipo de ${siteConfig.brand.name}.`} rows={3} />
       <Button type="submit" variant="secondary" loading={pending} loadingLabel="Procesando…">Darme de baja</Button>
       {state.status === "error" ? <Alert variant="error" title="No se ha podido completar">{state.message}</Alert> : null}
     </form>

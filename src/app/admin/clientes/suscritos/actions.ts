@@ -7,6 +7,7 @@ import { canAccessAdminSection } from "@/lib/auth/permissions";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { siteOrigin } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
+import { assertNotDemoDestructive } from "@/lib/demo";
 
 function hashToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
@@ -42,6 +43,7 @@ export async function resendNewsletterConfirmationAction(formData: FormData) {
 }
 
 export async function setNewsletterStatusAction(formData: FormData) {
+  if (text(formData, "status") === "bloqueado" || text(formData, "status") === "baja") assertNotDemoDestructive();
   const db = await authorized();
   const subscriberId = text(formData, "subscriber_id");
   const status = text(formData, "status") as "baja" | "bloqueado" | "activo";

@@ -1,6 +1,6 @@
-const CACHE_NAME = "fuerza-static-v3";
+const CACHE_NAME = "obrador-static-v4";
 const OFFLINE_URL = "/offline";
-const PRECACHE = [OFFLINE_URL, "/fuerza.jpeg", "/manifest.webmanifest", "/icon", "/apple-icon"];
+const PRECACHE = [OFFLINE_URL, "/brand/social/social-placeholder.svg", "/manifest.webmanifest", "/icon", "/apple-icon"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)));
@@ -47,9 +47,9 @@ self.addEventListener("push", (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch { data = {}; }
   const url = typeof data.url === "string" && data.url.startsWith("/") && !data.url.startsWith("//") ? data.url : "/cuenta";
-  event.waitUntil(self.registration.showNotification(data.title || "FUERZA", {
+  event.waitUntil(self.registration.showNotification(data.title || "Tu obrador", {
     body: data.body || "Tienes una actualización.", icon: data.icon || "/icon", badge: data.badge || "/icon",
-    tag: data.tag || "fuerza-update", data: { url }, renotify: false,
+    tag: data.tag || "obrador-update", data: { url }, renotify: false,
   }));
 });
 

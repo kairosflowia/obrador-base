@@ -5,6 +5,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { siteOrigin } from "@/lib/site-url";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { siteConfig } from "@/config/site-config";
 
 export interface NewsletterActionState {
   status: "idle" | "error" | "success";
@@ -12,7 +13,6 @@ export interface NewsletterActionState {
 }
 
 const CONSENT_VERSION = "2026-08";
-const SUCCESS_MESSAGE = "¡Gracias! Ya formas parte de la lista de FUERZA.";
 
 function value(formData: FormData, name: string) {
   return String(formData.get(name) ?? "").trim();
@@ -53,7 +53,7 @@ export async function subscribeToNewsletterAction(_state: NewsletterActionState,
   if (error || !result?.ok) {
     return { status: "error", message: "No hemos podido completar la suscripción. Inténtalo más tarde." };
   }
-  return { status: "success", message: `${SUCCESS_MESSAGE} Revisa tu correo para confirmar la suscripción.` };
+  return { status: "success", message: siteConfig.content.newsletter.successMessage };
 }
 
 export async function confirmNewsletterAction(_state: NewsletterActionState, formData: FormData): Promise<NewsletterActionState> {
@@ -76,7 +76,7 @@ export async function confirmNewsletterAction(_state: NewsletterActionState, for
   if (error || !result?.ok) {
     return { status: "error", message: "El enlace ha caducado o no es válido. Vuelve a suscribirte para recibir uno nuevo." };
   }
-  return { status: "success", message: SUCCESS_MESSAGE };
+  return { status: "success", message: siteConfig.content.newsletter.confirmedMessage };
 }
 
 export async function unsubscribeNewsletterAction(_state: NewsletterActionState, formData: FormData): Promise<NewsletterActionState> {
@@ -93,5 +93,5 @@ export async function unsubscribeNewsletterAction(_state: NewsletterActionState,
   if (error || !result?.ok) {
     return { status: "error", message: "No hemos podido procesar la baja. El enlace puede haber caducado." };
   }
-  return { status: "success", message: "Te has dado de baja de la newsletter de FUERZA." };
+  return { status: "success", message: siteConfig.content.newsletter.unsubscribedMessage };
 }

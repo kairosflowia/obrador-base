@@ -25,10 +25,11 @@ import {
   ToastProvider,
   useToast,
 } from "@/components/ui";
+import { siteConfig } from "@/config/site-config";
 
 const colors = [
-  ["Crema", "#F5F1E8"], ["Negro", "#000000"], ["Terracota", "#E4572E"],
-  ["Amarillo", "#F2C14E"], ["Verde", "#2E7D67"], ["Azul", "#4C78A8"],
+  ["Fondo", siteConfig.brand.colors.background], ["Texto", siteConfig.brand.colors.foreground], ["Principal", siteConfig.brand.colors.primary],
+  ["Acento", siteConfig.brand.colors.accent], ["Éxito", siteConfig.brand.colors.success], ["Información", siteConfig.brand.colors.information],
 ] as const;
 
 export function DesignSystemDemo() {

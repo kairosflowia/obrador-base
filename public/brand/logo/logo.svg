@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" role="img" aria-labelledby="title">
+  <title id="title">Logotipo provisório do obrador</title>
+  <rect width="640" height="180" rx="16" fill="#fffaf2"/>
+  <path d="M76 116c18-47 50-70 96-70s78 23 96 70H76Z" fill="#b97844"/>
+  <path d="M112 87c18 10 38 10 56 0m-31-28 9 27" fill="none" stroke="#241d17" stroke-width="7" stroke-linecap="round"/>
+  <text x="300" y="106" fill="#241d17" font-family="Georgia,serif" font-size="52">OBRADOR</text>
+</svg>

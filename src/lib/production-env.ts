@@ -1,6 +1,15 @@
 const serverRequired=["NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","SUPABASE_SERVICE_ROLE_KEY","STRIPE_SECRET_KEY","STRIPE_WEBHOOK_SECRET","NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY","CRON_SECRET"] as const;
 export function validateProductionEnvironment(env:NodeJS.ProcessEnv=process.env){
   if(env.NODE_ENV!=="production")return{valid:true,missing:[] as string[],invalid:[] as string[]};
+  const demo=["true","1","yes"].includes(env.NEXT_PUBLIC_DEMO_MODE?.trim().toLowerCase()??"");
+  if(demo){
+    const required=["NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","SUPABASE_SERVICE_ROLE_KEY"] as const;
+    const missing=required.filter(name=>!env[name]?.trim());const invalid=[] as string[];
+    if(env.STRIPE_SECRET_KEY?.startsWith("sk_live_")||env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith("pk_live_"))invalid.push("DEMO_STRIPE_LIVE");
+    if(env.EMAIL_PROVIDER==="resend")invalid.push("DEMO_EMAIL_PROVIDER");
+    if(env.PUSH_PROVIDER==="webpush")invalid.push("DEMO_PUSH_PROVIDER");
+    return{valid:missing.length===0&&invalid.length===0,missing:[...missing],invalid};
+  }
   // Escape hatch explícito para la fase de pre-lanzamiento (bugs/layout, sin
   // Stripe/email reales todavía): sin esta variable, el comportamiento es
   // exactamente el mismo de siempre -- solo se activa si alguien la pone a

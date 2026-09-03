@@ -5,6 +5,7 @@ import { canManagePickupOperations } from "@/lib/auth/permissions";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/database.types";
+import { assertNotDemoDestructive } from "@/lib/demo";
 
 export type PickupActionState = { ok: boolean; message?: string; errors?: Record<string, string> };
 const text = (f: FormData, n: string) => String(f.get(n) ?? "").trim();
@@ -212,6 +213,7 @@ export async function createExceptionAction(_s: PickupActionState, f: FormData):
 }
 
 export async function deleteExceptionAction(f: FormData) {
+  assertNotDemoDestructive();
   const { db } = await authorized();
   const id = text(f, "id");
   const pointId = text(f, "pickup_point_id");
@@ -245,6 +247,7 @@ export async function createGlobalClosureAction(_s: PickupActionState, f: FormDa
 }
 
 export async function deleteGlobalClosureAction(f: FormData) {
+  assertNotDemoDestructive();
   const { db } = await authorized();
   await db.from("global_closures").delete().eq("id", text(f, "id"));
   revalidateTag("pickup-points", "max");

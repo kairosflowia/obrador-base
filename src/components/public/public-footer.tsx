@@ -1,73 +1,72 @@
 import Link from "next/link";
 
-import { FacebookIcon, InstagramIcon } from "@/components/ui/icons";
+import { InstagramIcon, PinIcon } from "@/components/ui/icons";
+import { siteConfig } from "@/config/site-config";
 import { Newsletter } from "./newsletter";
 
 import { Container } from "../ui/layout";
 
-const socialLinks = [
-  { label: "Instagram", href: "#", Icon: InstagramIcon },
-  { label: "Facebook", href: "#", Icon: FacebookIcon },
-] as const;
-
-const panLinks = [
-  { label: "Panes diarios", href: "/reserva-y-recoge/panes-diarios" },
-  { label: "Pan especial del día", href: "/reserva-y-recoge/pan-especial-del-dia" },
-  { label: "Dulces", href: "/reserva-y-recoge/dulces" },
-  { label: "Ver todo el pan", href: "/reserva-y-recoge" },
-] as const;
-
-const infoLinks = [
-  { label: "Reserva y recoge", href: "/reserva-y-recoge" },
-  { label: "Fuerza Habitual", href: "/plan-de-pan" },
-  { label: "Dónde estamos", href: "/donde-estamos" },
-  { label: "Mi cuenta", href: "/cuenta/acceder" },
-] as const;
-
 export function PublicFooter() {
+  const content = siteConfig.content.footer;
+  const breadLinks = siteConfig.features.catalog ? content.breadLinks : [];
+  const informationLinks = content.informationLinks.filter(({ href }) => {
+    if (href === "/reserva-y-recoge") return siteConfig.features.onlineOrders;
+    if (href === "/plan-de-pan") return siteConfig.features.subscriptions;
+    if (href === "/donde-estamos") return siteConfig.features.pickupPoints;
+    if (href === "/cuenta/acceder") return siteConfig.features.customerAccounts;
+    return true;
+  });
+  const socialLinks = [
+    ...(siteConfig.business.instagram ? [{ label: "Instagram", href: siteConfig.business.instagram, Icon: InstagramIcon }] : []),
+    { label: "Dónde estamos", href: "/donde-estamos", Icon: PinIcon },
+  ];
+  const legalName = content.legalName || siteConfig.brand.name;
   return (
     <footer className="public-footer">
-      <Container size="wide" className="container--home footer-newsletter">
-        <Newsletter />
-      </Container>
+      {siteConfig.features.newsletter ? <Container size="wide" className="container--home footer-newsletter"><Newsletter /></Container> : null}
       <Container size="wide" className="container--home public-footer__grid">
         <div className="public-footer__brand">
-          <p className="wordmark">FUERZA</p>
-          <p className="footer-manifesto">Pan de masa madre, hecho entre dos manos y el tiempo.</p>
-          <div className="footer-social" aria-label="Redes sociales de FUERZA">
-            {socialLinks.map(({ label, href, Icon }) => (
-              <a key={label} href={href} aria-label={label} className="footer-social__link">
-                <Icon />
-              </a>
-            ))}
+          <p className="wordmark">{siteConfig.brand.name}</p>
+          <p className="footer-manifesto">{content.description}</p>
+          <div className="footer-social" aria-label={`Redes sociales y ubicación de ${siteConfig.brand.name}`}>
+            {socialLinks.map(({ label, href, Icon }) =>
+              href.startsWith("/") ? (
+                <Link key={label} href={href} aria-label={label} className="footer-social__link">
+                  <Icon />
+                </Link>
+              ) : (
+                <a key={label} href={href} aria-label={label} className="footer-social__link">
+                  <Icon />
+                </a>
+              )
+            )}
           </div>
-          <p>Obrador de masa madre · Avilés, Asturias</p>
         </div>
-        <nav aria-label="Navegación del pie: pan">
-          <p className="footer-heading">Pan</p>
-          {panLinks.map((item) => (
+        {breadLinks.length ? <nav aria-label="Navegación del pie: pan">
+          <p className="footer-heading">{content.breadHeading}</p>
+          {breadLinks.map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
-        </nav>
-        <nav aria-label="Navegación del pie: información">
-          <p className="footer-heading">Información</p>
-          {infoLinks.map((item) => (
+        </nav> : null}
+        {informationLinks.length ? <nav aria-label="Navegación del pie: información">
+          <p className="footer-heading">{content.informationHeading}</p>
+          {informationLinks.map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
-        </nav>
+        </nav> : null}
         <div>
-          <p className="footer-heading">Contacto</p>
-          <a href="mailto:hola@fuerza.com" className="footer-email">hola@fuerza.com</a>
-          <p>Martes a sábado<br />Recogida 10:00–14:30</p>
+          <p className="footer-heading">{content.contactHeading}</p>
+          {siteConfig.business.email ? <a href={`mailto:${siteConfig.business.email}`} className="footer-email">{siteConfig.business.email}</a> : <Link href="/contacto" className="footer-email">{content.contactFallback}</Link>}
+          {siteConfig.business.phone ? <a href={`tel:${siteConfig.business.phone.replace(/\s/g, "")}`} className="footer-email footer-phone">{siteConfig.business.phone}</a> : null}
         </div>
         <div className="footer-seal" aria-hidden="true">
-          <span>Masa madre</span>
-          <span className="footer-seal__mark">F</span>
-          <span>Oficio artesanal</span>
+          <span>{content.sealTop}</span>
+          <span className="footer-seal__mark">{siteConfig.brand.shortName.charAt(0)}</span>
+          <span>{content.sealBottom}</span>
         </div>
       </Container>
       <Container size="wide" className="container--home public-footer__bottom">
-        <small>© {new Date().getFullYear()} FUERZA</small>
+        <small>© {new Date().getFullYear()} {legalName}. Todos los derechos reservados.</small>
         <nav aria-label="Información legal" className="footer-legal">
           <Link href="/aviso-legal">Aviso legal</Link>
           <Link href="/privacidad">Política de privacidad</Link>

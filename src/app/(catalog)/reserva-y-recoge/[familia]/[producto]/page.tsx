@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { AllergenBadge } from "@/components/public/allergen-icon";
 import { Breadcrumbs } from "@/components/public/breadcrumbs";
 import { ProductOrderForm } from "@/components/public/product-order-form";
+import { siteConfig } from "@/config/site-config";
 import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, ClockIcon, PinIcon, WheatIcon } from "@/components/ui/icons";
 import { Container, Section } from "@/components/ui/layout";
@@ -23,7 +24,7 @@ const weekday = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sáb
 export async function generateMetadata({ params }: { params: Promise<{ familia: string; producto: string }> }): Promise<Metadata> {
   const product = await getPublicProduct((await params).producto);
   if (!product) return {};
-  return createPageMetadata({ title: product.seo_title ?? product.name, description: product.seo_description ?? product.short_description ?? `${product.name} — reserva y recoge en FUERZA.`, path: `/reserva-y-recoge/${(await params).familia}/${product.slug}` });
+  return createPageMetadata({ title: product.seo_title ?? product.name, description: product.seo_description ?? product.short_description ?? `${product.name} ${siteConfig.content.reservation.productSeoSuffix}`, path: `/reserva-y-recoge/${(await params).familia}/${product.slug}` });
 }
 
 export default async function ProductoPage({ params }: { params: Promise<{ familia: string; producto: string }> }) {
@@ -106,7 +107,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ famil
                 </div>
               ) : null}
 
-              {activeVariants.length ? (
+              {siteConfig.features.onlineOrders && activeVariants.length ? (
                 <ProductOrderForm
                   productName={product.name}
                   variants={activeVariants.map((v) => {
@@ -115,9 +116,9 @@ export default async function ProductoPage({ params }: { params: Promise<{ famil
                   })}
                   image={image?.storage_path}
                 />
-              ) : (
+              ) : !activeVariants.length ? (
                 <p>Este producto no tiene ninguna variante disponible ahora mismo.</p>
-              )}
+              ) : null}
             </div>
           </div>
         </Container>

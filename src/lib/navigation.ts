@@ -1,11 +1,17 @@
+import { siteConfig } from "@/config/site-config";
+import type { FeatureKey } from "@/config/feature-config";
+import { isAdminSectionEnabled } from "@/lib/features";
+
 export const publicNavigation = [
   { label: "Inicio", href: "/" },
-  { label: "Pan", href: "/pan" },
-  { label: "Reserva y recoge", href: "/reserva-y-recoge" },
-  { label: "Fuerza Habitual", href: "/plan-de-pan" },
-  { label: "Dónde estamos", href: "/donde-estamos" },
+  { label: "Pan", href: "/pan", feature: "catalog" },
+  { label: "Reserva y recoge", href: "/reserva-y-recoge", feature: "onlineOrders" },
+  { label: siteConfig.content.subscriptions.name, href: "/plan-de-pan", feature: "subscriptions" },
+  { label: "Dónde estamos", href: "/donde-estamos", feature: "pickupPoints" },
   { label: "Contacto", href: "/contacto" },
-] as const;
+] as const satisfies readonly { label: string; href: string; feature?: FeatureKey }[];
+
+export const visiblePublicNavigation = publicNavigation.filter((item) => !("feature" in item) || siteConfig.features[item.feature]);
 
 export const publicRoutes = [
   "/",
@@ -68,4 +74,8 @@ export type AdminNavIcon = AdminSection["icon"];
 
 export function getAdminSection(slug: string): AdminSection | undefined {
   return adminNavigation.find((item) => item.slug === slug);
+}
+
+export function enabledAdminSections<T extends { slug: string }>(sections: readonly T[]) {
+  return sections.filter(({ slug }) => isAdminSectionEnabled(slug));
 }

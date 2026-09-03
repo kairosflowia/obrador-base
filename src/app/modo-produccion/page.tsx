@@ -8,6 +8,7 @@ import { getCurrentIdentity } from "@/lib/auth/session";
 import { BATCH_STATUS, loadProductionDay, nextBatchAction } from "@/lib/production-batches";
 import { formatIsoDateEs, isoToday, shiftIsoDate } from "@/lib/production-date";
 import { createClient } from "@/lib/supabase/server";
+import { siteConfig } from "@/config/site-config";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,7 @@ export default async function ProductionKioskPage({ searchParams }: { searchPara
   return (
     <div className="kiosk">
       <header className="kiosk__bar">
-        <span className="kiosk__brand">FUERZA <em>obrador</em></span>
+        <span className="kiosk__brand">{siteConfig.brand.shortName} <em>obrador</em></span>
         <nav className="kiosk__date" aria-label="Selector de fecha">
           <Link href={`/modo-produccion?fecha=${shiftIsoDate(date, -1)}`} aria-label="Día anterior">‹</Link>
           <strong>{date === today ? `Hoy · ${formatIsoDateEs(date)}` : formatIsoDateEs(date)}</strong>

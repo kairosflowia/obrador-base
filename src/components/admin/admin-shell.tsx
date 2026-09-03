@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 
 import { signOutAction } from "@/app/(public)/cuenta/actions";
 import type { AppRole } from "@/lib/supabase/database.types";
+import { siteConfig } from "@/config/site-config";
+import { resetDemoDataAction } from "@/app/admin/demo-actions";
 
 import { Button } from "../ui/button";
 import { ToastProvider } from "../ui/toast";
@@ -27,8 +29,9 @@ export function AdminHeader({ email, fullName, roles }: { email: string; fullNam
   return (
     <header className="admin-header">
       <div>
-        <span className="admin-header__mark">FUERZA</span>
+        <span className="admin-header__mark">{siteConfig.brand.shortName}</span>
         <span className="admin-header__context">Administración</span>
+        {siteConfig.demoMode ? <span className="admin-demo-badge">DEMO</span> : null}
       </div>
       <div className="admin-user">
         <span className="admin-user__info">
@@ -36,6 +39,7 @@ export function AdminHeader({ email, fullName, roles }: { email: string; fullNam
           <span className="admin-user__role">{primaryRoleLabel(roles)}</span>
         </span>
         <span className="admin-user__avatar">{initial}</span>
+        {siteConfig.demoMode && roles.some((role) => role === "owner" || role === "admin") ? <form action={resetDemoDataAction}><Button variant="secondary" type="submit">Restablecer demo</Button></form> : null}
         <form action={signOutAction}><Button variant="text" type="submit">Cerrar sesión</Button></form>
       </div>
     </header>

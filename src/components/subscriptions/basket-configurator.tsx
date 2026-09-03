@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 
 import { Alert, Badge, Button, Card, Select } from "@/components/ui";
 import { formatPrice } from "@/lib/catalog-domain";
+import { siteConfig } from "@/config/site-config";
 import {
   basketDiscountPercent,
   FREQUENCY_DESCRIPTIONS_ES,
@@ -48,7 +49,7 @@ function SubscriptionPayment({ subscriptionId }: { subscriptionId: string }) {
       >
         <PaymentElement />
         <p className="membership-summary__note">El primer pago y los siguientes se gestionan de forma segura con Stripe.</p>
-        <Button type="submit" loading={busy} disabled={!stripe} fullWidth>Activar Fuerza Habitual</Button>
+        <Button type="submit" loading={busy} disabled={!stripe} fullWidth>Activar {siteConfig.content.subscriptions.name}</Button>
         {error ? <Alert variant="error" title="No se ha podido pagar">{error}</Alert> : null}
       </form>
     </Card>
@@ -111,7 +112,7 @@ export function BasketConfigurator({ variants, pickupPoints, initialFrequency }:
   }
 
   if (!variants.length) {
-    return <Alert variant="warning" title="Sin panes disponibles en membresía">Todavía no hay ningún pan publicado para Fuerza Habitual. Vuelve pronto.</Alert>;
+    return <Alert variant="warning" title="Sin panes disponibles en membresía">Todavía no hay ningún pan publicado para {siteConfig.content.subscriptions.name}. Vuelve pronto.</Alert>;
   }
 
   return (

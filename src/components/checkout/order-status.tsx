@@ -84,7 +84,7 @@ export function OrderStatusClient({ code, token }: { code: string; token: string
     );
   }
 
-  const canCancel = !cancelResult && CANCELLABLE_STATUSES.includes(data.status);
+  const canCancel = !data.is_demo && !cancelResult && CANCELLABLE_STATUSES.includes(data.status);
   const point = pickupPoint(data)?.name ?? null;
   const timeRange = pickupTimeRange(data);
   const stillProcessing = POLLING_STATUSES.includes(data.payment_status);
@@ -120,6 +120,8 @@ export function OrderStatusClient({ code, token }: { code: string; token: string
           <Badge variant={PAYMENT_STATUS_BADGE_VARIANT[data.payment_status] ?? "neutral"}>{paymentStatusLabel(data.payment_status)}</Badge>
         </div>
       </div>
+
+      {data.is_demo ? <Alert variant="information" title="Pedido de demostración">Este pedido fue simulado. No se realizó ningún cobro ni se enviará una comunicación real.</Alert> : null}
 
       {failed ? (
         <Alert variant="error" title="El pago no se ha completado">

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { siteConfig } from "@/config/site-config";
 
 import { PublicFooter } from "@/components/public/public-footer";
 import { PublicHeader } from "@/components/public/public-header";
@@ -9,10 +10,10 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
   const websiteData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "FUERZA",
-    description: "Obrador de masa madre en Asturias.",
+    name: siteConfig.brand.name,
+    description: siteConfig.seo.description,
     inLanguage: "es-ES",
-    ...(process.env.NEXT_PUBLIC_SITE_URL ? { url: process.env.NEXT_PUBLIC_SITE_URL } : {}),
+    url: siteConfig.seo.siteUrl,
   };
 
   return (

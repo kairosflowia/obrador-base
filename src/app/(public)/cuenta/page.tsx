@@ -15,6 +15,7 @@ import { ORDER_STATUS_BADGE_VARIANT, orderStatusLabel } from "@/lib/order-status
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { createPageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/config/site-config";
 
 export const metadata: Metadata = createPageMetadata({ title: "Mi FUERZA", description: "Tu próxima recogida, tus pedidos y tu Fuerza Habitual, en un mismo sitio.", path: "/cuenta" });
 
@@ -113,15 +114,15 @@ export default async function AccountPage() {
                     <p>{pickupPointName(nextOrder.pickup_point_id) ?? "Punto de recogida"}</p>
                   </Card>
                 ) : (
-                  <EmptyState title="No tienes ninguna recogida próxima" description="Cuando reserves pan, tu próxima recogida aparecerá aquí." action={<Link className="button button--primary" href="/reserva-y-recoge">Reservar y recoge</Link>} />
+                  <EmptyState title="No tienes ninguna recogida próxima" description="Cuando reserves pan, tu próxima recogida aparecerá aquí." action={siteConfig.features.onlineOrders ? <Link className="button button--primary" href="/reserva-y-recoge">Reserva y recoge</Link> : undefined} />
                 )}
               </section>
 
-              <section className="account-section">
+              {siteConfig.features.subscriptions ? <section className="account-section">
                 <p className="account-section__eyebrow">Fuerza Habitual</p>
                 <h2>Tus membresías</h2>
                 <AccountSubscriptionsCard subscriptions={subscriptionSummaries} />
-              </section>
+              </section> : null}
 
               <section className="account-section">
                 <p className="account-section__eyebrow">Historial</p>
@@ -135,7 +136,7 @@ export default async function AccountPage() {
                           <Badge variant={ORDER_STATUS_BADGE_VARIANT[order.status] ?? "neutral"}>{orderStatusLabel(order.status)}</Badge>
                           {(order.total_cents / 100).toLocaleString("es-ES", { style: "currency", currency: order.currency })}
                         </span>
-                        <RepeatOrderButton items={repeatItemsByOrder.get(order.id) ?? []} />
+                        {siteConfig.features.onlineOrders ? <RepeatOrderButton items={repeatItemsByOrder.get(order.id) ?? []} /> : null}
                       </li>
                     ))}
                   </ul>
@@ -144,7 +145,7 @@ export default async function AccountPage() {
                 )}
               </section>
 
-              <section className="account-section">
+              {siteConfig.features.notifications && !siteConfig.demoMode ? <section className="account-section">
                 <p className="account-section__eyebrow">Preferencias</p>
                 <h2>Comunicaciones</h2>
                 <p className="account-section__hint">Las confirmaciones de pedido y los avisos operativos necesarios permanecen activos.</p>
@@ -154,9 +155,9 @@ export default async function AccountPage() {
                   <Checkbox id="comm-marketing" name="marketing" label="Novedades y promociones" defaultChecked={preference("email", "marketing", false)} />
                   <Button type="submit">Guardar preferencias</Button>
                 </form>
-              </section>
+              </section> : null}
 
-              <section className="account-section">
+              {siteConfig.features.notifications && !siteConfig.demoMode ? <section className="account-section">
                 <p className="account-section__eyebrow">Preferencias</p>
                 <h2>Notificaciones push</h2>
                 <PushNotifications initialDevices={pushDevices ?? []} />
@@ -166,7 +167,7 @@ export default async function AccountPage() {
                   <Checkbox id="push-reminder" name="push_reminder" label="Recordatorios de recogida" defaultChecked={preference("push", "reminder", true)} />
                   <Button type="submit">Guardar avisos push</Button>
                 </form>
-              </section>
+              </section> : null}
 
               <section className="account-section">
                 <p className="account-section__eyebrow">Privacidad</p>

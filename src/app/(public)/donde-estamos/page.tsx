@@ -12,10 +12,11 @@ import {
   mainBakery,
 } from "@/lib/pickup-points";
 import { createPageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/config/site-config";
 
 export const metadata = createPageMetadata({
-  title: "Dónde estamos",
-  description: "Información sobre el obrador FUERZA en Avilés y sus puntos de recogida.",
+  title: siteConfig.content.location.seo.title,
+  description: siteConfig.content.location.seo.description,
   path: "/donde-estamos",
 });
 
@@ -25,6 +26,7 @@ function timeRange(start: string | null, end: string | null) {
 }
 
 export default async function DondeEstamosPage() {
+  const content = siteConfig.content.location;
   const { points } = await getPublicPickupPoints();
   const bakery = mainBakery(points);
   const ordered = [...points].sort((a, b) => {
@@ -35,12 +37,12 @@ export default async function DondeEstamosPage() {
   return (
     <main id="main-content">
       <PageIntro
-        eyebrow="Avilés, Asturias"
-        title="Dónde estamos"
+        eyebrow={content.intro.eyebrow}
+        title={content.intro.title}
         description={
           bakery
-            ? "Puedes recoger tu pan en el obrador o en cualquiera de nuestros puntos de recogida. Cada uno tiene sus propios días y horarios."
-            : "Horneamos en Asturias y estamos preparando una red de recogida cercana y fácil de entender."
+            ? content.intro.withPoints
+            : content.intro.withoutPoints
         }
       />
 
@@ -79,7 +81,7 @@ export default async function DondeEstamosPage() {
 
                     {windowsByDay.length ? (
                       <div>
-                        <p><strong>Días y franjas de recogida FUERZA</strong></p>
+                        <p><strong>Días y franjas de recogida</strong></p>
                         <ul>{windowsByDay.map((day) => <li key={day.label}>{day.label}: {day.ranges.join(", ")}</li>)}</ul>
                       </div>
                     ) : (
@@ -116,16 +118,14 @@ export default async function DondeEstamosPage() {
       <Section tone="sunken">
         <Container className="split-callout">
           <div>
-            <p className="eyebrow">Antes de venir</p>
-            <h2>Cada punto tiene sus propias reglas</h2>
+            <p className="eyebrow">{content.callout.eyebrow}</p>
+            <h2>{content.callout.title}</h2>
           </div>
           <div className="prose-block">
             <p>
-              La reserva indicará el lugar, el día y la ventana de recogida disponibles. No mostraremos un punto cerrado ni una opción incompatible con tu pan.
+              {content.callout.description}
             </p>
-            <Link className="text-link" href="/reserva-y-recoge">
-              Cómo funcionará la recogida
-            </Link>
+            {siteConfig.features.onlineOrders ? <Link className="text-link" href="/reserva-y-recoge">{content.callout.action}</Link> : null}
           </div>
         </Container>
       </Section>

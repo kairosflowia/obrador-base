@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { siteConfig } from "@/config/site-config";
 
 import { Button } from "../ui/button";
 
@@ -37,8 +38,8 @@ export function InstallPrompt() {
   };
 
   return (
-    <aside className="install-prompt" aria-label="Instalar FUERZA">
-      <p><strong>Lleva FUERZA contigo.</strong> Puedes instalar este portal.</p>
+    <aside className="install-prompt" aria-label={`Instalar ${siteConfig.brand.name}`}>
+      <p><strong>Lleva {siteConfig.brand.name} contigo.</strong> Puedes instalar este portal.</p>
       <Button variant="secondary" onClick={install}>Instalar</Button>
     </aside>
   );
@@ -48,7 +49,7 @@ export function IOSInstallInstructions({ show = false }: { show?: boolean }) {
   if (!show) return null;
 
   return (
-    <aside className="alert alert--information" aria-label="Instalar FUERZA en iPhone o iPad">
+    <aside className="alert alert--information" aria-label={`Instalar ${siteConfig.brand.name} en iPhone o iPad`}>
       <p>Pulsa Compartir y después Añadir a pantalla de inicio.</p>
     </aside>
   );

@@ -37,5 +37,6 @@ export class WebPushProvider implements PushProvider {
 }
 
 export function getPushProvider(): PushProvider {
-  return process.env.PUSH_PROVIDER === "webpush" ? new WebPushProvider() : new FakePushProvider();
+  const demo = ["true", "1", "yes"].includes(process.env.NEXT_PUBLIC_DEMO_MODE?.trim().toLowerCase() ?? "");
+  return !demo && process.env.PUSH_PROVIDER === "webpush" ? new WebPushProvider() : new FakePushProvider();
 }

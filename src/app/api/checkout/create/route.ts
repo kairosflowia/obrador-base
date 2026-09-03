@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { siteConfig } from "@/config/site-config";
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
@@ -21,6 +22,14 @@ export async function POST(request: Request) {
     const { data, error } = await db.rpc("create_checkout_order", { p_items: body.items, p_pickup_point_id: body.pickupPointId, p_collection_date: body.collectionDate, p_session_key: body.sessionKey ?? randomUUID(), p_customer_id: user?.id ?? null, p_name: body.name, p_email: body.email, p_phone: body.phone, p_terms_version: "2026-08", p_privacy_version: "2026-08", p_marketing: Boolean(body.marketing), p_lookup_hash: hash });
     const result = data?.[0];
     if (error || !result?.ok) return NextResponse.json({ error: result?.reason ?? "checkout_invalid" }, { status: 400 });
+    if (siteConfig.demoMode) {
+      const demoIntent = `demo_pi_${result.order_id}`;
+      const demoCode = `DEMO-${String(result.public_code).replace(/^FZ-/, "")}`;
+      await db.from("orders").update({ is_demo: true, public_code: demoCode, stripe_payment_intent_id: demoIntent }).eq("id", result.order_id);
+      const { error: confirmationError } = await db.rpc("process_payment_event", { p_event_id: `demo-event-${result.order_id}`, p_event_type: "payment_intent.succeeded", p_payment_intent: demoIntent, p_amount: result.total_cents, p_currency: "EUR", p_payload_hash: "demo" });
+      if (confirmationError) return NextResponse.json({ error: "demo_confirmation_failed" }, { status: 500 });
+      return NextResponse.json({ demo: true, publicCode: demoCode, lookupToken: lookup, expiresAt: null });
+    }
     const { data: order } = await db.from("orders").select("reservation_id").eq("id", result.order_id).single();
     // payment_method_types explícito a solo "card" (no automatic_payment_methods):
     // Apple Pay y Google Pay siguen apareciendo como carteras sobre el propio

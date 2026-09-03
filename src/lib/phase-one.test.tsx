@@ -28,11 +28,8 @@ describe("design system foundations", () => {
 
   it("keeps the approved theme tokens in one stylesheet", () => {
     const css = readFileSync(resolve(process.cwd(), "src/app/globals.css"), "utf8");
-    // --crema se actualizó a #fceddc para igualar el tono de fondo real
-    // (matriz-alfa incluida) de los nuevos logos vectoriales (01-fuerza-logo.svg,
-    // nombre-fuerza.svg), a pedido explícito del usuario.
-    for (const color of ["#fceddc", "#000000", "#e4572e", "#f2c14e", "#2e7d67", "#4c78a8"]) {
-      expect(css).toContain(color);
+    for (const token of ["--background", "--foreground", "--primary", "--secondary", "--accent", "--success", "--warning", "--error", "--border", "--font-display", "--font-body", "--radius-3"]) {
+      expect(css).toContain(token);
     }
     expect(css).toContain("env(safe-area-inset-bottom)");
     expect(css).toContain("prefers-reduced-motion");
@@ -42,7 +39,7 @@ describe("design system foundations", () => {
 describe("navigation contracts", () => {
   it("defines the approved public navigation", () => {
     expect(publicNavigation.map(({ label }) => label)).toEqual([
-      "Inicio", "Pan", "Reserva y recoge", "Fuerza Habitual", "Dónde estamos", "Contacto",
+      "Inicio", "Pan", "Reserva y recoge", "Plan de Pan", "Dónde estamos", "Contacto",
     ]);
   });
 
@@ -57,10 +54,10 @@ describe("navigation contracts", () => {
 describe("PWA and metadata contracts", () => {
   it("provides an installable standalone manifest", () => {
     const value = manifest();
-    expect(value.name).toBe("FUERZA");
+    expect(value.name).toBe("OBRADOR BASE");
     expect(value.display).toBe("standalone");
     expect(value.start_url).toBe("/");
-    expect(value.icons).toHaveLength(2);
+    expect(value.icons).toHaveLength(3);
   });
 
   it("keeps commercial navigation network-only", () => {

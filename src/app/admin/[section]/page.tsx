@@ -3,16 +3,17 @@ import { notFound, redirect } from "next/navigation";
 
 import { AdminEmptyState } from "@/components/admin/admin-empty-state";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { adminNavigation, getAdminSection } from "@/lib/navigation";
+import { adminNavigation, enabledAdminSections, getAdminSection } from "@/lib/navigation";
 import { canAccessAdminSection } from "@/lib/auth/permissions";
 import { getCurrentIdentity } from "@/lib/auth/session";
+import { isAdminSectionEnabled } from "@/lib/features";
 
 interface AdminSectionPageProps {
   params: Promise<{ section: string }>;
 }
 
 export function generateStaticParams() {
-  return adminNavigation.map(({ slug }) => ({ section: slug }));
+  return enabledAdminSections(adminNavigation).map(({ slug }) => ({ section: slug }));
 }
 
 export async function generateMetadata({ params }: AdminSectionPageProps): Promise<Metadata> {
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: AdminSectionPageProps): Promi
 
 export default async function AdminSectionPage({ params }: AdminSectionPageProps) {
   const section = getAdminSection((await params).section);
-  if (!section) notFound();
+  if (!section || !isAdminSectionEnabled(section.slug)) notFound();
   const identity = await getCurrentIdentity();
   if (!identity || !canAccessAdminSection(identity.roles, section.slug)) redirect("/cuenta/acceso-denegado");
 

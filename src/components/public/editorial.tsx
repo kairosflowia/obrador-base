@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 
-import Image from "next/image";
 import Link from "next/link";
 
+import { BrandImage } from "@/components/media/brand-image";
+import { siteConfig } from "@/config/site-config";
 import { formatPrice } from "@/lib/catalog-domain";
 
 import { cn } from "@/lib/cn";
@@ -19,7 +20,7 @@ export function ValueCard({ number, icon, image, title, children, tone = "plain"
       {image ? (
         <>
           <span className="value-card__illustration">
-            <Image src={image} alt={title} width={320} height={320} />
+            <BrandImage src={image} fallbackSrc={siteConfig.content.images.institutional} alt={title} width={320} height={320} />
           </span>
           <h3 className="sr-only">{title}</h3>
         </>
@@ -38,13 +39,9 @@ export function ValueCard({ number, icon, image, title, children, tone = "plain"
 export function EditorialProductPreview({ href, name, description, imagePath, imageAlt, priceCents }: { href: string; name: string; description: string | null; imagePath: string | null; imageAlt: string; priceCents: number | null }) {
   return (
     <Link href={href} className="editorial-product">
-      {imagePath ? (
-        <span className="editorial-product__image">
-          <Image src={`/api/product-images/${imagePath}`} alt={imageAlt} width={480} height={360} />
-        </span>
-      ) : (
-        <div className="editorial-product__placeholder" aria-hidden="true"><span>?</span></div>
-      )}
+      <span className="editorial-product__image">
+        <BrandImage src={imagePath ? `/api/product-images/${imagePath}` : null} fallbackSrc={siteConfig.content.images.productFallback} alt={imageAlt || name} width={480} height={360} />
+      </span>
       <h3>{name}</h3>
       {description ? <p>{description}</p> : null}
       {priceCents !== null ? <span className="editorial-product__price">Desde {formatPrice(priceCents)}</span> : null}

@@ -8,10 +8,11 @@ import { getCurrentIdentity } from "@/lib/auth/session";
 import { createPageMetadata } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import type { SubscriptionFrequency } from "@/lib/subscriptions-domain";
+import { siteConfig } from "@/config/site-config";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Membresías Fuerza Habitual",
-  description: "Elige tu pan y tu frecuencia para Fuerza Habitual.",
+  title: siteConfig.content.subscriptions.memberships.title,
+  description: siteConfig.content.subscriptions.memberships.description,
   path: "/plan-de-pan/membresias",
 });
 
@@ -46,11 +47,7 @@ export default async function MembresiasPage({ searchParams }: { searchParams: P
 
   return (
     <main id="main-content">
-      <PageIntro
-        eyebrow="Explora los panes disponibles"
-        title="Membresías Fuerza Habitual"
-        description="Elige el pan que quieres recibir, la cantidad y la frecuencia. Con 4 unidades o más en tu cesta, el 5% de descuento se aplica automáticamente."
-      />
+      <PageIntro {...siteConfig.content.subscriptions.memberships} />
       <Section>
         <Container size="wide">
           <BasketConfigurator variants={options} pickupPoints={points ?? []} initialFrequency={initialFrequency} />

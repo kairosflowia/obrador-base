@@ -1,4 +1,5 @@
 import { getPushProvider } from "@/lib/notifications/push-provider";
+import { siteConfig } from "@/config/site-config";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const supportedEvents = new Set(["order-confirmed", "payment-failed", "order-ready", "order-cancelled", "pickup-reminder", "pickup-window-changed", "subscription-started", "subscription-payment-failed", "subscription-action-required", "subscription-cycle-confirmed"]);
@@ -17,8 +18,8 @@ function payloadFor(event: any) {
     "subscription-action-required": ["Acción necesaria", "Revisa tu Plan de Pan."],
     "subscription-cycle-confirmed": ["Recogida confirmada", "Tu próximo ciclo está confirmado."],
   };
-  const [title, body] = messages[event.event_key] ?? ["FUERZA", "Tienes una actualización."];
-  return JSON.stringify({ title, body, icon: "/icon", badge: "/icon", tag: `${event.event_key}:${event.entity_id}`, url: link });
+  const [title, body] = messages[event.event_key] ?? [siteConfig.brand.name, "Tienes una actualización."];
+  return JSON.stringify({ title, body, icon: siteConfig.brand.icon, badge: siteConfig.brand.icon, tag: `${event.event_key}:${event.entity_id}`, url: link });
 }
 
 export async function processPushNotifications(limit = 50) {

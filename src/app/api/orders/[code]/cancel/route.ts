@@ -3,10 +3,12 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { siteConfig } from "@/config/site-config";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request, { params }: { params: Promise<{ code: string }> }) {
+  if (siteConfig.demoMode) return NextResponse.json({ error: "disabled_in_demo" }, { status: 409 });
   const rate = await enforceRateLimit("orders.cancel", 6, 900);
   if (!rate.allowed) return NextResponse.json({ error: "too_many_requests" }, { status: 429, headers: { "retry-after": String(rate.retryAfter) } });
 

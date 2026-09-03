@@ -4,15 +4,17 @@ import { NewsletterConfirmForm } from "@/components/public/newsletter-confirm-fo
 import { PageIntro } from "@/components/public/page-intro";
 import { Alert, Container, Section } from "@/components/ui";
 import { createPageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/config/site-config";
 
-export const metadata: Metadata = createPageMetadata({ title: "Confirmar suscripción", description: "Confirma tu suscripción a la newsletter de FUERZA.", path: "/newsletter/confirmar" });
+export const metadata: Metadata = createPageMetadata({ title: "Confirmar suscripción", description: siteConfig.content.newsletter.confirmation.seoDescription, path: "/newsletter/confirmar" });
 
 export default async function ConfirmNewsletterPage({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
   const { token } = await searchParams;
+  const content = siteConfig.content.newsletter.confirmation;
 
   return (
     <main id="main-content">
-      <PageIntro eyebrow="Newsletter" title="Confirma tu suscripción" description="Un último paso: confirma que quieres recibir novedades de FUERZA por correo." />
+      <PageIntro eyebrow={content.eyebrow} title={content.title} description={content.description} />
       <Section>
         <Container className="auth-layout">
           {token ? (

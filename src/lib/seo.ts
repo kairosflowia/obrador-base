@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/config/site-config";
 
 interface PageSeo {
   title: string;
@@ -25,13 +26,11 @@ export function createPageMetadata({
       url: path,
       type: "website",
       locale: "es_ES",
-      siteName: "FUERZA",
+      siteName: siteConfig.brand.name,
       images: [
         {
-          url: "/fuerza.jpeg",
-          width: 1254,
-          height: 1254,
-          alt: "FUERZA, obrador de masa madre en Asturias",
+          url: siteConfig.seo.socialImage,
+          alt: siteConfig.brand.name,
         },
       ],
     },

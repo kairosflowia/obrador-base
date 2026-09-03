@@ -1,6 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
+import { siteConfig } from "@/config/site-config";
 
 import { Loading } from "./loading";
 
@@ -26,6 +27,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   loadingLabel = "Cargando…",
   className,
   disabled,
+  title,
   children,
   type = "button",
   ...props
@@ -40,7 +42,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         fullWidth && "button--full",
         className,
       )}
-      disabled={disabled || loading}
+      disabled={disabled || loading || (siteConfig.demoMode && variant === "destructive")}
+      title={siteConfig.demoMode && variant === "destructive" ? "No disponible en modo demo" : title}
       aria-busy={loading || undefined}
       {...props}
     >

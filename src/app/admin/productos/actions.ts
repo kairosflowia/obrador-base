@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { canAccessAdminSection } from "@/lib/auth/permissions";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import { assertNotDemoDestructive } from "@/lib/demo";
 
 export type CatalogActionState = { ok:boolean; message?:string; errors?:Record<string,string> };
 const text=(f:FormData,n:string)=>String(f.get(n)??"").trim();
@@ -36,10 +37,10 @@ export async function saveProductAction(_s:CatalogActionState,f:FormData):Promis
  const ingredients=text(f,"ingredients").split(",").map(x=>x.trim()).filter(Boolean);await db.from("product_ingredients").delete().eq("product_id",productId);for(const [display_order,name] of ingredients.entries()){const found=await db.from("ingredients").upsert({name},{onConflict:"name"}).select("id").single();if(found.data)await db.from("product_ingredients").insert({product_id:productId,ingredient_id:found.data.id,display_order});}
  const publish=await db.from("products").update({status:requested||"draft"}).eq("id",productId);if(publish.error)return{ok:false,message:"No se puede publicar: completa una variante activa y el texto obligatorio."};refresh();redirect(`/admin/productos/${productId}`);
 }
-export async function discontinueProductAction(f:FormData){const db=await authorized(),id=text(f,"id");await db.from("products").update({status:"discontinued"}).eq("id",id);refresh();redirect("/admin/productos");}
+export async function discontinueProductAction(f:FormData){assertNotDemoDestructive();const db=await authorized(),id=text(f,"id");await db.from("products").update({status:"discontinued"}).eq("id",id);refresh();redirect("/admin/productos");}
 export async function toggleProductStatusAction(f:FormData){const db=await authorized(),id=text(f,"id"),next=text(f,"next") as "draft"|"active";await db.from("products").update({status:next}).eq("id",id);refresh();redirect("/admin/productos");}
 export async function uploadProductImageAction(f:FormData){const db=await authorized(),productId=text(f,"product_id"),alt=text(f,"alt_text"),file=f.get("image");if(!(file instanceof File)||!alt||file.size>8388608||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type))return;const ext={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif"}[file.type];const path=`${productId}/${crypto.randomUUID()}.${ext}`;const up=await db.storage.from("product-images").upload(path,file,{contentType:file.type,upsert:false});if(!up.error)await db.from("product_images").insert({product_id:productId,storage_path:path,alt_text:alt,is_primary:f.get("is_primary")==="on"});refresh();}
-export async function removeProductImageAction(f:FormData){const db=await authorized(),id=text(f,"image_id"),path=text(f,"storage_path");const removed=await db.from("product_images").delete().eq("id",id);if(!removed.error)await db.storage.from("product-images").remove([path]);refresh();}
+export async function removeProductImageAction(f:FormData){assertNotDemoDestructive();const db=await authorized(),id=text(f,"image_id"),path=text(f,"storage_path");const removed=await db.from("product_images").delete().eq("id",id);if(!removed.error)await db.storage.from("product-images").remove([path]);refresh();}
 export async function updateLowStockThresholdAction(f:FormData){const db=await authorized(),variantId=text(f,"variant_id"),productId=text(f,"product_id"),raw=text(f,"low_stock_threshold");const value=raw===""?null:Number.parseInt(raw,10);if(value!==null&&(!Number.isFinite(value)||value<0))return;await db.from("product_variants").update({low_stock_threshold:value}).eq("id",variantId);revalidatePath("/admin/inventario");if(productId)revalidatePath(`/admin/productos/${productId}/editar`);}
 
 export type WeeklySpecialActionState = { ok: boolean; message?: string };
@@ -76,6 +77,7 @@ export async function saveWeeklySpecialAction(_s: WeeklySpecialActionState, f: F
 }
 
 export async function deleteWeeklySpecialAction(f: FormData) {
+  assertNotDemoDestructive();
   const db = await authorized();
   await db.from("weekly_specials").delete().eq("id", text(f, "id"));
   refreshWeeklySpecial();

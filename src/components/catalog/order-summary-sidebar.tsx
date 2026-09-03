@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/catalog-domain";
 import type { CutoffConfig } from "@/lib/order-cutoff";
 
 import { formatDateEs } from "@/lib/order-cutoff";
+import { siteConfig } from "@/config/site-config";
 
 import { CutoffCountdown } from "./cutoff-countdown";
 import { usePickupPoint } from "./pickup-point-provider";
@@ -14,6 +15,7 @@ import { usePickupPoint } from "./pickup-point-provider";
 export function OrderSummarySidebar({ cutoffConfig }: { cutoffConfig: CutoffConfig }) {
   const { selected, date } = usePickupPoint();
   const cart = useCart();
+  if (!siteConfig.features.onlineOrders) return null;
 
   return (
     <aside className="catalog-sidebar">

@@ -4,10 +4,11 @@ import Link from "next/link";
 
 import { useCart } from "@/components/cart/cart-provider";
 import { formatPrice } from "@/lib/catalog-domain";
+import { siteConfig } from "@/config/site-config";
 
 export function BottomCheckoutBar() {
   const cart = useCart();
-  if (!cart.count) return null;
+  if (!siteConfig.features.onlineOrders || !cart.count) return null;
 
   return (
     <div className="catalog-bottom-bar">

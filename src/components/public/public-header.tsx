@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
 
-import { publicNavigation } from "@/lib/navigation";
+import { visiblePublicNavigation } from "@/lib/navigation";
+import { siteConfig } from "@/config/site-config";
+import { BrandImage } from "@/components/media/brand-image";
 
 import { Button } from "../ui/button";
 import { Drawer } from "../ui/dialog";
@@ -20,12 +22,12 @@ export function PublicHeader() {
   return (
     <header className="public-header">
       <div className="container container--home public-header__inner">
-        <Link className="site-logo" href="/" aria-label="FUERZA, inicio">
-          FUERZA
+        <Link className="site-logo" href="/" aria-label={`${siteConfig.brand.name}, inicio`}>
+          <BrandImage src={siteConfig.brand.logo} fallbackSrc="/brand/logo/logo.svg" alt="" width={160} height={45} priority />
         </Link>
 
         <nav className="public-nav" aria-label="Navegación principal">
-          {publicNavigation.map((item) => (
+          {visiblePublicNavigation.map((item) => (
             <Link
               href={item.href}
               key={item.href}
@@ -37,13 +39,8 @@ export function PublicHeader() {
         </nav>
 
         <div className="public-header__actions">
-          <Link href="/cuenta/acceder" className="header-icon-link" aria-label="Mi cuenta">
-            <UserIcon />
-          </Link>
-          <div className="cart-widget">
-            <CartLink />
-            <MiniCart />
-          </div>
+          {siteConfig.features.customerAccounts ? <Link href="/cuenta/acceder" className="header-icon-link" aria-label="Mi cuenta"><UserIcon /></Link> : null}
+          {siteConfig.features.onlineOrders ? <div className="cart-widget"><CartLink /><MiniCart /></div> : null}
           <Button
             ref={triggerRef}
             variant="icon"
@@ -66,7 +63,7 @@ export function PublicHeader() {
         className="mobile-navigation"
       >
         <nav id="public-mobile-menu" aria-label="Navegación móvil">
-          {publicNavigation.map((item) => (
+          {visiblePublicNavigation.map((item) => (
             <Link
               href={item.href}
               key={item.href}

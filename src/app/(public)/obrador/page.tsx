@@ -1,38 +1,112 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { EditorialGrid, ValueCard } from "@/components/public/editorial";
-import { PageIntro } from "@/components/public/page-intro";
+import { Breadcrumbs } from "@/components/public/breadcrumbs";
+import { BrandImage } from "@/components/media/brand-image";
+import { siteConfig } from "@/config/site-config";
 import { Container, Section } from "@/components/ui";
+import { ArchOvenIcon, ClockIcon, JarIcon, WheatIcon } from "@/components/ui/icons";
 import { createPageMetadata } from "@/lib/seo";
 
+const PROCESS_ICONS = { starter: JarIcon, time: ClockIcon, oven: ArchOvenIcon, grain: WheatIcon } as const;
+
 export const metadata: Metadata = createPageMetadata({
-  title: "Cómo hacemos el pan",
-  description: "Masa madre viva, fermentación lenta y una cantidad limitada cada día. Así trabajamos en nuestro obrador de Asturias.",
+  title: siteConfig.content.obrador.seo.title,
+  description: siteConfig.content.obrador.seo.description,
   path: "/obrador",
-  ogTitle: "El obrador de FUERZA",
-  ogDescription: "Masa madre, tiempo y una cantidad limitada. Así se hace este pan.",
+  ogTitle: siteConfig.content.obrador.seo.ogTitle,
+  ogDescription: siteConfig.content.obrador.seo.ogDescription,
 });
 
 export default function ObradorPage() {
+  const content = siteConfig.content.obrador;
   return (
-    <main id="main-content">
-      <Section><Container size="wide">
-        <PageIntro title="El obrador" eyebrow="Cómo trabajamos" description="Aquí se hace el pan. Somos pocos, el sitio es pequeño y el horno tiene un límite. Todo lo que sigue sale de ahí." />
-      </Container></Section>
-      <Section tone="sunken"><Container size="wide">
-        <EditorialGrid columns={2}>
-          <ValueCard number="01" title="La masa madre">Harina y agua que fermentan y que alimentamos cada día. No usamos levadura industrial.</ValueCard>
-          <ValueCard number="02" title="La fermentación">Después de amasar, esperamos. Publicaremos el tiempo exacto cuando esté confirmado por el obrador.</ValueCard>
-          <ValueCard number="03" title="El horno">Formamos cada pieza a mano. Cuando sale, el pan sigue trabajando por dentro mientras se enfría.</ValueCard>
-          <ValueCard number="04" title="La rutina">Se amasa, se espera, se forma, se hornea y se reparte. El horario general es de 9:00 a 18:00.</ValueCard>
-        </EditorialGrid>
-      </Container></Section>
-      <Section><Container size="wide" className="prose-layout">
-        <article><h2>Por qué hay una cantidad limitada</h2><p>No es una estrategia. Es que tenemos un horno, unas manos y unas horas.</p><p>Cada día podemos hacer una cantidad concreta. Hacer de más por si acaso acaba en pan tirado. Reservar nos permitirá hornear exactamente el pan que hace falta.</p></article>
-        <article><h2>Lo que no se tira</h2><p>El pan no dura para siempre, y eso es normal en un pan sin conservantes. Lo que no queremos es tirarlo.</p><p>La producción limitada y el pago al reservar harán que cada pieza tenga destino antes de encender el horno.</p></article>
-      </Container></Section>
-      <Section tone="inverse"><Container size="wide" className="cta-band"><div><p className="eyebrow">Hecho con tiempo y fuerza</p><h2>El pan empieza antes de que abra la puerta.</h2></div><Link className="button button--primary" href="/reserva-y-recoge">Ver la estructura del pan</Link></Container></Section>
+    <main id="main-content" className="home-theme obrador-page">
+      {/* 1. Hero */}
+      <section className="obrador-hero">
+        <div className="obrador-hero__text">
+          <Breadcrumbs items={[{ label: "El obrador" }]} />
+          <p className="eyebrow">{content.intro.eyebrow}</p>
+          <h1>{content.intro.title}</h1>
+          <p>{content.intro.description}</p>
+        </div>
+        <div className="obrador-hero__media">
+          <BrandImage
+            src={siteConfig.content.images.obrador}
+            fallbackSrc="/brand/obrador/obrador-placeholder.svg"
+            alt={content.intro.imageAlt}
+            fill
+            sizes="(min-width: 64rem) 65vw, 100vw"
+            style={{ objectFit: "cover", objectPosition: "center" }}
+            priority
+          />
+        </div>
+      </section>
+
+      {/* 2. Los 4 pasos del proceso */}
+      <Section tone="sunken" className="obrador-steps-section">
+        <Container size="wide" className="container--home">
+          <div className="obrador-steps">
+            {content.process.map(({ number, title, description, icon }) => {
+              const Icon = PROCESS_ICONS[icon];
+              return (
+              <article key={number} className="obrador-step">
+                <div className="obrador-step__body">
+                  <span className="obrador-step__number">{number}</span>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                </div>
+                <span className="obrador-step__icon" aria-hidden="true"><Icon width={46} height={46} /></span>
+              </article>
+              );
+            })}
+          </div>
+        </Container>
+      </Section>
+
+      {/* 3. Por qué hay una cantidad limitada */}
+      <section className="obrador-editorial">
+        <div className="obrador-editorial__text">
+          <h2>{content.production.title}</h2>
+          {content.production.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          <h3>{content.production.secondaryTitle}</h3>
+          {content.production.secondaryParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </div>
+        <div className="obrador-editorial__media">
+          <BrandImage
+            src={siteConfig.content.images.obradorProcess}
+            fallbackSrc="/brand/obrador/obrador-placeholder.svg"
+            alt={content.production.imageAlt}
+            fill
+            sizes="(min-width: 64rem) 50vw, 100vw"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+      </section>
+
+      {/* 4. CTA oscuro */}
+      <Section className="obrador-cta-section">
+        <Container size="wide" className="container--home">
+          <div className="obrador-cta">
+            <div className="obrador-cta__text">
+              <p className="eyebrow">{content.cta.eyebrow}</p>
+              <h2>{content.cta.title}</h2>
+              {siteConfig.features.onlineOrders ? <Link className="button button--primary" href="/reserva-y-recoge">{content.cta.action}</Link> : null}
+            </div>
+            <div className="obrador-cta__media">
+              <BrandImage
+                src={siteConfig.content.images.institutional}
+                fallbackSrc="/brand/institutional/institutional-placeholder.svg"
+                alt={content.cta.imageAlt}
+                width={800}
+                height={800}
+              />
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* 5. Newsletter: el bloque del footer, justo antes del grid, ya cumple este paso — evita duplicar el formulario. */}
     </main>
   );
 }
