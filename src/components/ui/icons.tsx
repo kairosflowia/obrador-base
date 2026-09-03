@@ -333,3 +333,13 @@ export function MoreIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function SwatchIcon(props: IconProps) {
+  return (
+    <svg {...baseProps} {...props}>
+      <path d="M4 4h9a2 2 0 0 1 2 2v13.5a1.5 1.5 0 0 1-3 0V6.5" />
+      <circle cx="8.5" cy="8.5" r="1.25" fill="currentColor" stroke="none" />
+      <path d="M16.5 8.5 20 12a2 2 0 0 1 0 2.83l-6.17 6.17" />
+    </svg>
+  );
+}

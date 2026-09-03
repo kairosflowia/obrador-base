@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 type LegalParagraphBlock = { heading: string; paragraphs: readonly string[] };
 type LegalPendingBlock = { heading: string; pending: true; note: string };
@@ -12,13 +12,13 @@ function content(blocks: readonly LegalBlock[]): readonly LegalBlock[] {
   return blocks;
 }
 
-const CONTACT_EMAIL = siteConfig.business.email || "la página de Contacto";
-
-const titularPending: LegalPendingBlock = {
-  heading: "Titularidad del sitio",
-  pending: true,
-  note: "Estamos completando los datos identificativos del titular (razón social, NIF/CIF y domicilio fiscal) antes de su publicación. Mientras tanto, puedes contactar con nosotros en " + CONTACT_EMAIL + " para cualquier consulta sobre esta información.",
-};
+function titularPendingFor(contactEmail: string): LegalPendingBlock {
+  return {
+    heading: "Titularidad del sitio",
+    pending: true,
+    note: "Estamos completando los datos identificativos del titular (razón social, NIF/CIF y domicilio fiscal) antes de su publicación. Mientras tanto, puedes contactar con nosotros en " + contactEmail + " para cualquier consulta sobre esta información.",
+  };
+}
 
 export interface LegalOwnerIdentity {
   controllerName: string | null;
@@ -32,11 +32,13 @@ export interface LegalOwnerIdentity {
  * (razón social, NIF/CIF y domicilio son obligatorios; el correo legal es
  * opcional, cae al correo de contacto general si no se ha indicado). Hasta
  * entonces sigue mostrando el bloque pendiente. */
-export function resolveTitularBlock(heading: string, identity: LegalOwnerIdentity | null): LegalBlock {
+export async function resolveTitularBlock(heading: string, identity: LegalOwnerIdentity | null): Promise<LegalBlock> {
+  const siteConfig = await getBrandSettings();
+  const contactEmailFallback = siteConfig.business.email || "la página de Contacto";
   if (!identity?.controllerName || !identity.taxId || !identity.fiscalAddress) {
-    return { ...titularPending, heading };
+    return { ...titularPendingFor(contactEmailFallback), heading };
   }
-  const contactEmail = identity.contactEmail || CONTACT_EMAIL;
+  const contactEmail = identity.contactEmail || contactEmailFallback;
   return {
     heading,
     paragraphs: [
@@ -46,7 +48,9 @@ export function resolveTitularBlock(heading: string, identity: LegalOwnerIdentit
   };
 }
 
-export const legalPages = {
+function buildLegalPages(contactEmail: string) {
+  const titularPending = titularPendingFor(contactEmail);
+  return {
   "aviso-legal": {
     title: "Aviso legal",
     description: "Condiciones de uso del sitio web de FUERZA, propiedad intelectual y responsabilidad.",
@@ -100,7 +104,7 @@ export const legalPages = {
       {
         heading: "Derechos y conservación",
         paragraphs: [
-          `Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a ${CONTACT_EMAIL}. Muchos de estos datos (nombre, teléfono, dirección) también puedes consultarlos y actualizarlos tú mismo desde tu cuenta.`,
+          `Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a ${contactEmail}. Muchos de estos datos (nombre, teléfono, dirección) también puedes consultarlos y actualizarlos tú mismo desde tu cuenta.`,
           "Conservamos tus datos mientras mantengas una cuenta activa o una relación contractual con nosotros (pedidos o suscripción en curso), y después durante el plazo que exija la normativa fiscal y mercantil aplicable a los documentos de venta.",
           "Si consideras que no hemos tratado tus datos correctamente, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).",
         ],
@@ -256,15 +260,25 @@ export const legalPages = {
       {
         heading: "Consultas antes de comprar",
         paragraphs: [
-          `Si tienes una alergia o intolerancia y necesitas más detalle antes de reservar, escríbenos desde la página de Contacto o a ${CONTACT_EMAIL} y te confirmamos lo que necesites.`,
+          `Si tienes una alergia o intolerancia y necesitas más detalle antes de reservar, escríbenos desde la página de Contacto o a ${contactEmail} y te confirmamos lo que necesites.`,
         ],
       },
     ]),
   },
-} as const;
+  } as const;
+}
 
-export type LegalSlug = keyof typeof legalPages;
+export type LegalPages = ReturnType<typeof buildLegalPages>;
+export type LegalSlug = keyof LegalPages;
+
+export const LEGAL_SLUGS = ["aviso-legal", "privacidad", "cookies", "condiciones-de-compra", "politica-de-cancelacion", "politica-de-suscripcion", "informacion-alergenos"] as const;
 
 export function isLegalSlug(value: string): value is LegalSlug {
-  return value in legalPages;
+  return (LEGAL_SLUGS as readonly string[]).includes(value);
+}
+
+export async function getLegalPages(): Promise<LegalPages> {
+  const siteConfig = await getBrandSettings();
+  const contactEmail = siteConfig.business.email || "la página de Contacto";
+  return buildLegalPages(contactEmail);
 }

@@ -992,6 +992,12 @@ p { max-width: 68ch; }
 .admin-tabs a { flex:0 0 auto; min-height:2.5rem; align-content:center; padding-inline:var(--space-3); border-radius:calc(var(--radius-3) - 3px); color:var(--muted-foreground); font-size:0.85rem; font-weight:600; text-decoration:none; transition:background-color 140ms ease, color 140ms ease; }
 .admin-tabs a:hover { color:var(--foreground); }
 .admin-tabs a[aria-current="page"] { background:var(--background); color:var(--foreground); font-weight:700; box-shadow:0 1px 2px var(--overlay-soft); }
+.admin-tabs--secondary { background:transparent; border:none; padding:0; margin-block:var(--space-3) var(--space-5); }
+.admin-form__fieldset { display:grid; gap:var(--space-3); border:1px solid var(--border); border-radius:var(--radius-2); padding:var(--space-4); margin-block:var(--space-2); }
+.admin-form__fieldset legend { font-weight:700; padding-inline:var(--space-2); }
+.admin-image-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(16rem, 1fr)); gap:var(--space-4); }
+.admin-marca-colors { display:grid; grid-template-columns:minmax(0,1fr) minmax(16rem, 22rem); gap:var(--space-5); align-items:start; }
+@media (max-width: 64rem) { .admin-marca-colors { grid-template-columns:1fr; } }
 .admin-filters { display:grid; grid-template-columns:repeat(auto-fit, minmax(9rem, 1fr)); gap:var(--space-3); align-items:end; margin-block:var(--space-5); padding:var(--space-4); border:1px solid var(--border); border-radius:var(--radius-2); background:var(--surface); }
 .admin-filters label { display:grid; gap:var(--space-1); font-size:0.8rem; font-weight:700; }
 .admin-filters input,.admin-filters select { min-height:2.75rem; border:1px solid var(--border-strong); border-radius:var(--radius-1); background:var(--background); padding:0.6rem; color:var(--foreground); }

@@ -1,16 +1,22 @@
+import type { Metadata } from "next";
+
 import { Container, Section } from "@/components/ui/layout";
 import { ContactForm } from "@/components/public/contact-form";
 import { PageIntro } from "@/components/public/page-intro";
 import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
-export const metadata = createPageMetadata({
-  title: siteConfig.content.contact.seo.title,
-  description: siteConfig.content.contact.seo.description,
-  path: "/contacto",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: siteConfig.content.contact.seo.title,
+    description: siteConfig.content.contact.seo.description,
+    path: "/contacto",
+  });
+}
 
-export default function ContactoPage() {
+export default async function ContactoPage() {
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.contact;
   return (
     <main id="main-content">

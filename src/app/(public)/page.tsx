@@ -10,21 +10,25 @@ import { Container, Section } from "@/components/ui";
 import { formatPrice } from "@/lib/catalog-domain";
 import { getPublicCatalog } from "@/lib/catalog";
 import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { SUBSCRIPTION_DISCOUNT_PERCENT, SUBSCRIPTION_DISCOUNT_THRESHOLD_UNITS } from "@/lib/subscriptions-domain";
 import { getCurrentWeeklySpecial } from "@/lib/weekly-special";
 
-export const metadata: Metadata = createPageMetadata({
-  title: siteConfig.seo.title,
-  description: siteConfig.seo.description,
-  path: "/",
-  ogTitle: `${siteConfig.brand.name} — ${siteConfig.seo.title}`,
-  ogDescription: siteConfig.content.home.seo.ogDescription,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: siteConfig.seo.title,
+    description: siteConfig.seo.description,
+    path: "/",
+    ogTitle: `${siteConfig.brand.name} — ${siteConfig.seo.title}`,
+    ogDescription: siteConfig.content.home.seo.ogDescription,
+  });
+}
 
-const CRAFT_ICONS = { starter: JarIcon, time: ClockIcon, grain: WheatIcon, craft: ArchOvenIcon } as const;
+const CRAFT_ICONS: Record<string, typeof JarIcon> = { starter: JarIcon, time: ClockIcon, grain: WheatIcon, craft: ArchOvenIcon };
 
 export default async function Home() {
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.home;
   const [catalog, weeklySpecial] = await Promise.all([
     siteConfig.features.catalog ? getPublicCatalog() : Promise.resolve([]),
@@ -85,7 +89,7 @@ export default async function Home() {
               <p className="craft-section__lead">{content.craft.description}</p>
               <div className="craft-features">
                 {content.craft.features.map(({ icon, title, description }) => {
-                  const Icon = CRAFT_ICONS[icon];
+                  const Icon = CRAFT_ICONS[icon] ?? JarIcon;
                   return (
                   <div key={title} className="craft-feature">
                     <span className="craft-feature__icon" aria-hidden="true">

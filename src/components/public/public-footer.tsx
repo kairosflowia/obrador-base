@@ -1,12 +1,13 @@
 import Link from "next/link";
 
 import { InstagramIcon, PinIcon } from "@/components/ui/icons";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { Newsletter } from "./newsletter";
 
 import { Container } from "../ui/layout";
 
-export function PublicFooter() {
+export async function PublicFooter() {
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.footer;
   const breadLinks = siteConfig.features.catalog ? content.breadLinks : [];
   const informationLinks = content.informationLinks.filter(({ href }) => {

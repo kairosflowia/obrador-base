@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { BrandImage } from "@/components/media/brand-image";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/catalog-domain";
 import type { WeeklySpecial } from "@/lib/weekly-special";
@@ -11,7 +11,8 @@ function formatSaturday(date: string) {
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
-export function WeeklySpecialBanner({ special }: { special: WeeklySpecial }) {
+export async function WeeklySpecialBanner({ special }: { special: WeeklySpecial }) {
+  const siteConfig = await getBrandSettings();
   const href = special.product.familySlug ? `/reserva-y-recoge/${special.product.familySlug}/${special.product.slug}` : `/pan/${special.product.slug}`;
   const content = siteConfig.content.home.weeklySpecial;
 

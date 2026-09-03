@@ -8,17 +8,21 @@ import { getCurrentIdentity } from "@/lib/auth/session";
 import { createPageMetadata } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import type { SubscriptionFrequency } from "@/lib/subscriptions-domain";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
-export const metadata: Metadata = createPageMetadata({
-  title: siteConfig.content.subscriptions.memberships.title,
-  description: siteConfig.content.subscriptions.memberships.description,
-  path: "/plan-de-pan/membresias",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: siteConfig.content.subscriptions.memberships.title,
+    description: siteConfig.content.subscriptions.memberships.description,
+    path: "/plan-de-pan/membresias",
+  });
+}
 
 const VALID_FREQUENCIES: SubscriptionFrequency[] = ["weekly", "biweekly", "every_3_weeks", "monthly"];
 
 export default async function MembresiasPage({ searchParams }: { searchParams: Promise<{ frecuencia?: string }> }) {
+  const siteConfig = await getBrandSettings();
   const identity = await getCurrentIdentity();
   if (!identity) redirect("/cuenta/acceder?next=/plan-de-pan/membresias");
   const { frecuencia } = await searchParams;

@@ -3,19 +3,22 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
 import { AdminShell } from "@/components/admin/admin-shell";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { canAccessAdmin } from "@/lib/auth/permissions";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = {
-  title: {
-    default: "Administración",
-    template: `%s · Administración · ${siteConfig.brand.name}`,
-  },
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return {
+    title: {
+      default: "Administración",
+      template: `%s · Administración · ${siteConfig.brand.name}`,
+    },
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   if (!isSupabaseConfigured()) redirect("/cuenta/acceder?next=/admin");

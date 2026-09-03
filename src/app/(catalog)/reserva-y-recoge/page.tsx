@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Alert } from "@/components/ui/alert";
@@ -7,17 +8,21 @@ import { WeeklySpecialBanner } from "@/components/public/weekly-special-banner";
 import { getPublicCatalog } from "@/lib/catalog";
 import { getCutoffConfig } from "@/lib/order-cutoff-server";
 import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { BrandImage } from "@/components/media/brand-image";
 import { getCurrentWeeklySpecial } from "@/lib/weekly-special";
 
-export const metadata = createPageMetadata({
-  title: siteConfig.content.reservation.seo.title,
-  description: siteConfig.content.reservation.seo.description,
-  path: "/reserva-y-recoge",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: siteConfig.content.reservation.seo.title,
+    description: siteConfig.content.reservation.seo.description,
+    path: "/reserva-y-recoge",
+  });
+}
 
 export default async function ReservaYRecogePage() {
+  const siteConfig = await getBrandSettings();
   const [catalog, cutoffConfig, weeklySpecial] = await Promise.all([getPublicCatalog(), getCutoffConfig(), getCurrentWeeklySpecial()]);
   const families = [...new Map(catalog.flatMap((p) => (p.family ? [[p.family.id, p.family]] as const : []))).values()]
     .map((family) => ({ family, count: catalog.filter((p) => p.family?.id === family.id).length }))

@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { AllergenBadge } from "@/components/public/allergen-icon";
 import { Breadcrumbs } from "@/components/public/breadcrumbs";
 import { ProductOrderForm } from "@/components/public/product-order-form";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, ClockIcon, PinIcon, WheatIcon } from "@/components/ui/icons";
 import { Container, Section } from "@/components/ui/layout";
@@ -24,10 +24,12 @@ const weekday = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sáb
 export async function generateMetadata({ params }: { params: Promise<{ familia: string; producto: string }> }): Promise<Metadata> {
   const product = await getPublicProduct((await params).producto);
   if (!product) return {};
+  const siteConfig = await getBrandSettings();
   return createPageMetadata({ title: product.seo_title ?? product.name, description: product.seo_description ?? product.short_description ?? `${product.name} ${siteConfig.content.reservation.productSeoSuffix}`, path: `/reserva-y-recoge/${(await params).familia}/${product.slug}` });
 }
 
 export default async function ProductoPage({ params }: { params: Promise<{ familia: string; producto: string }> }) {
+  const siteConfig = await getBrandSettings();
   const { familia, producto } = await params;
   const product = await getPublicProduct(producto);
   if (!product || product.family?.slug !== familia) notFound();

@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const siteConfig = await getBrandSettings();
   return {
     name: siteConfig.brand.name,
     short_name: siteConfig.brand.shortName,

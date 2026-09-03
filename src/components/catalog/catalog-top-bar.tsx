@@ -4,13 +4,14 @@ import Link from "next/link";
 
 import { useCart } from "@/components/cart/cart-provider";
 import { CartIcon } from "@/components/ui/icons";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 import { BrandImage } from "@/components/media/brand-image";
 import { formatPrice } from "@/lib/catalog-domain";
 
 import { usePickupPoint } from "./pickup-point-provider";
 
 export function CatalogTopBar() {
+  const siteConfig = useBrand();
   const { points, selectedId, select, date, minDate, setDate } = usePickupPoint();
   const cart = useCart();
 

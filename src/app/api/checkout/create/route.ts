@@ -4,10 +4,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
+    const siteConfig = await getBrandSettings();
     const origin = request.headers.get("origin");
     if (!origin || origin !== new URL(request.url).origin) {
       return NextResponse.json({ error: "invalid_origin" }, { status: 403 });

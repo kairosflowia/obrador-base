@@ -8,8 +8,6 @@ alter table public.product_variants add column if not exists is_demo boolean not
 alter table public.pickup_points add column if not exists is_demo boolean not null default false;
 alter table public.production_dates add column if not exists is_demo boolean not null default false;
 alter table public.product_stock_movements add column if not exists is_demo boolean not null default false;
-alter table public.subscription_plans add column if not exists is_demo boolean not null default false;
-alter table public.subscription_plan_items add column if not exists is_demo boolean not null default false;
 alter table public.subscriptions add column if not exists is_demo boolean not null default false;
 alter table public.subscription_items add column if not exists is_demo boolean not null default false;
 alter table public.subscription_cycles add column if not exists is_demo boolean not null default false;
@@ -56,13 +54,13 @@ on conflict (id) do update set name = excluded.name, slug = excluded.slug, descr
 
 insert into public.products (id, family_id, name, slug, short_description, long_description, flour_type, flour_origin, fermentation_hours, status, display_order, is_demo)
 values
-  ('22222222-2222-4222-8222-222222222201', '11111111-1111-4111-8111-111111111101', 'Hogaza de masa madre', 'hogaza-masa-madre', 'Corteza crujiente y miga alveolada.', 'Una hogaza de fermentación lenta, horneada cada día.', 'Trigo ecológico', 'Molino local', 24, 'active', 1, true),
-  ('22222222-2222-4222-8222-222222222202', '11111111-1111-4111-8111-111111111101', 'Pan integral', 'pan-integral', 'Pan de trigo integral con sabor profundo.', 'Elaborado con harina integral y masa madre.', 'Trigo integral', 'Molino local', 18, 'active', 2, true),
-  ('22222222-2222-4222-8222-222222222203', '11111111-1111-4111-8111-111111111101', 'Pan de semillas', 'pan-de-semillas', 'Mezcla tostada de semillas y cereales.', 'Una pieza aromática con semillas de calabaza, lino y sésamo.', 'Trigo', 'Molino local', 20, 'active', 3, true),
-  ('22222222-2222-4222-8222-222222222204', '11111111-1111-4111-8111-111111111102', 'Focaccia', 'focaccia', 'Focaccia esponjosa con aceite de oliva.', 'Masa hidratada, reposada y terminada con aceite de oliva.', 'Trigo', 'Molino local', 12, 'active', 1, true),
-  ('22222222-2222-4222-8222-222222222205', '11111111-1111-4111-8111-111111111103', 'Cookies artesanales', 'cookies-artesanales', 'Cookies tiernas con chocolate y frutos secos.', 'Horneadas en pequeñas tandas para conservar su textura.', 'Trigo', 'Molino local', 0, 'active', 1, true),
-  ('22222222-2222-4222-8222-222222222206', '11111111-1111-4111-8111-111111111103', 'Bollería', 'bolleria', 'Bollería del día, ligera y hojaldrada.', 'Una selección de piezas dulces elaboradas en el obrador.', 'Trigo', 'Molino local', 8, 'active', 2, true)
-on conflict (id) do update set family_id = excluded.family_id, name = excluded.name, slug = excluded.slug, short_description = excluded.short_description, long_description = excluded.long_description, status = excluded.status, display_order = excluded.display_order, is_demo = true;
+  ('22222222-2222-4222-8222-222222222201', '11111111-1111-4111-8111-111111111101', 'Hogaza de masa madre', 'hogaza-masa-madre', 'Corteza crujiente y miga alveolada.', 'Una hogaza de fermentación lenta, horneada cada día.', 'Trigo ecológico', 'Molino local', 24, 'draft', 1, true),
+  ('22222222-2222-4222-8222-222222222202', '11111111-1111-4111-8111-111111111101', 'Pan integral', 'pan-integral', 'Pan de trigo integral con sabor profundo.', 'Elaborado con harina integral y masa madre.', 'Trigo integral', 'Molino local', 18, 'draft', 2, true),
+  ('22222222-2222-4222-8222-222222222203', '11111111-1111-4111-8111-111111111101', 'Pan de semillas', 'pan-de-semillas', 'Mezcla tostada de semillas y cereales.', 'Una pieza aromática con semillas de calabaza, lino y sésamo.', 'Trigo', 'Molino local', 20, 'draft', 3, true),
+  ('22222222-2222-4222-8222-222222222204', '11111111-1111-4111-8111-111111111102', 'Focaccia', 'focaccia', 'Focaccia esponjosa con aceite de oliva.', 'Masa hidratada, reposada y terminada con aceite de oliva.', 'Trigo', 'Molino local', 12, 'draft', 1, true),
+  ('22222222-2222-4222-8222-222222222205', '11111111-1111-4111-8111-111111111103', 'Cookies artesanales', 'cookies-artesanales', 'Cookies tiernas con chocolate y frutos secos.', 'Horneadas en pequeñas tandas para conservar su textura.', 'Trigo', 'Molino local', null, 'draft', 1, true),
+  ('22222222-2222-4222-8222-222222222206', '11111111-1111-4111-8111-111111111103', 'Bollería', 'bolleria', 'Bollería del día, ligera y hojaldrada.', 'Una selección de piezas dulces elaboradas en el obrador.', 'Trigo', 'Molino local', 8, 'draft', 2, true)
+on conflict (id) do update set family_id = excluded.family_id, name = excluded.name, slug = excluded.slug, short_description = excluded.short_description, long_description = excluded.long_description, display_order = excluded.display_order, is_demo = true;
 
 insert into public.product_variants (id, product_id, name, approximate_weight_grams, price_cents, vat_rate, status, display_order, stock_tracking, is_demo)
 values
@@ -76,16 +74,32 @@ values
   ('33333333-3333-4333-8333-333333333208', '22222222-2222-4222-8222-222222222206', 'Caja de 4', 420, 950, 10, 'active', 2, true, true)
 on conflict (id) do update set product_id = excluded.product_id, name = excluded.name, approximate_weight_grams = excluded.approximate_weight_grams, price_cents = excluded.price_cents, vat_rate = excluded.vat_rate, status = excluded.status, display_order = excluded.display_order, stock_tracking = true, is_demo = true;
 
+-- El trigger app_private.validate_product_publication() exige que un
+-- producto ya tenga una variante activa antes de aceptar status='active';
+-- por eso se crean como 'draft' y se publican aquí, después de sus
+-- variantes.
+update public.products set status = 'active'
+where id in (
+  '22222222-2222-4222-8222-222222222201', '22222222-2222-4222-8222-222222222202', '22222222-2222-4222-8222-222222222203',
+  '22222222-2222-4222-8222-222222222204', '22222222-2222-4222-8222-222222222205', '22222222-2222-4222-8222-222222222206'
+);
+
+-- is_main_bakery tiene un índice único parcial (un solo obrador principal
+-- en todo el sistema). Si ya existe uno real (no-demo), el punto de
+-- recogida demo se crea como punto normal, no como obrador principal, para
+-- no chocar con datos reales ya presentes en la base.
 insert into public.pickup_points (id, name, slug, type, is_main_bakery, accepts_all_products, address_line_1, postal_code, city, province, country_code, public_instructions, internal_notes, contact_name, contact_phone, contact_email, display_order, is_public, status, is_demo)
-values ('44444444-4444-4444-8444-444444444401', 'Punto de recogida principal', 'punto-de-recogida-principal', 'bakery', true, true, 'Calle del Horno 1', '00000', 'Ciudad Demo', 'Provincia Demo', 'ES', 'Te esperamos en el obrador durante tu ventana de recogida.', 'Punto creado para demostración.', 'Equipo del obrador', '+34 600 000 000', 'hola@example.invalid', 1, true, 'active', true)
-on conflict (id) do update set name = excluded.name, slug = excluded.slug, type = excluded.type, is_main_bakery = true, accepts_all_products = true, address_line_1 = excluded.address_line_1, postal_code = excluded.postal_code, city = excluded.city, province = excluded.province, country_code = excluded.country_code, public_instructions = excluded.public_instructions, internal_notes = excluded.internal_notes, is_public = true, status = 'active', is_demo = true;
+select '44444444-4444-4444-8444-444444444401', 'Punto de recogida principal', 'punto-de-recogida-principal', 'bakery',
+  not exists (select 1 from public.pickup_points where is_main_bakery),
+  true, 'Calle del Horno 1', '00000', 'Ciudad Demo', 'Provincia Demo', 'ES', 'Te esperamos en el obrador durante tu ventana de recogida.', 'Punto creado para demostración.', 'Equipo del obrador', '+34 600 000 000', 'hola@example.invalid', 1, true, 'active', true
+on conflict (id) do update set name = excluded.name, slug = excluded.slug, type = excluded.type, accepts_all_products = true, address_line_1 = excluded.address_line_1, postal_code = excluded.postal_code, city = excluded.city, province = excluded.province, country_code = excluded.country_code, public_instructions = excluded.public_instructions, internal_notes = excluded.internal_notes, is_public = true, status = 'active', is_demo = true;
 
 insert into public.pickup_point_opening_hours (pickup_point_id, weekday, opens_at, closes_at, is_closed, is_demo)
 select '44444444-4444-4444-8444-444444444401', d, '08:00', '14:00', false, true from generate_series(1,6) d
 on conflict (pickup_point_id, weekday) do update set opens_at = excluded.opens_at, closes_at = excluded.closes_at, is_closed = false, is_demo = true;
 insert into public.pickup_point_collection_windows (id, pickup_point_id, weekday, starts_at, ends_at, is_active, is_demo)
 select ('88888888-8888-4888-8888-' || lpad(d::text, 12, '0'))::uuid, '44444444-4444-4444-8444-444444444401', d, '10:00', '14:00', true, true from generate_series(1,6) d
-on conflict (pickup_point_id, weekday) do update set starts_at = excluded.starts_at, ends_at = excluded.ends_at, is_active = true, is_demo = true;
+on conflict (id) do update set starts_at = excluded.starts_at, ends_at = excluded.ends_at, is_active = true, is_demo = true;
 insert into public.pickup_point_capacity_defaults (pickup_point_id, weekday, max_units, is_demo)
 select '44444444-4444-4444-8444-444444444401', d, 30, true from generate_series(1,6) d
 on conflict (pickup_point_id, weekday) do update set max_units = 30, is_demo = true;
@@ -122,15 +136,16 @@ insert into public.product_stock_movements (id, product_variant_id, type, quanti
 values ('99999999-9999-4999-8999-999999999205', '33333333-3333-4333-8333-333333333205', 'venta', -1, '55555555-5555-4555-8555-555555555501', 'Venda simulada no pedido DEMO-0001.', true)
 on conflict (id) do nothing;
 
-insert into public.subscription_plans (id, name, slug, description, status, billing_interval, billing_interval_count, price_cents, currency, display_order, is_public, stripe_product_id, stripe_price_id, is_demo)
-values ('66666666-6666-4666-8666-666666666601', 'Plan de Pan Demo', 'plan-de-pan-demo', 'Uma seleção semanal de pães artesanais para experimentar o sistema.', 'active', 'weekly', 1, 5000, 'EUR', 1, true, 'demo_product_plan', 'demo_price_plan', true)
-on conflict (id) do update set name = excluded.name, description = excluded.description, status = 'active', price_cents = excluded.price_cents, is_public = true, stripe_product_id = excluded.stripe_product_id, stripe_price_id = excluded.stripe_price_id, is_demo = true;
-insert into public.subscription_plan_items (subscription_plan_id, product_variant_id, quantity, display_order, is_demo)
-values ('66666666-6666-4666-8666-666666666601', '33333333-3333-4333-8333-333333333201', 1, 1, true), ('66666666-6666-4666-8666-666666666601', '33333333-3333-4333-8333-333333333202', 1, 2, true)
-on conflict (subscription_plan_id, product_variant_id) do update set quantity = excluded.quantity, is_demo = true;
+-- El modelo de suscripción vigente (20260808210000_fuerza_habitual_redesign)
+-- eliminó subscription_plans/subscription_plan_items: el cliente arma su
+-- propia cesta directamente en subscription_items, sobre variantes marcadas
+-- subscribable. El seed demo marca las dos variantes de ejemplo como
+-- suscribibles en vez de crear un "plan" fijo.
+update public.product_variants set subscribable = true
+where id in ('33333333-3333-4333-8333-333333333201', '33333333-3333-4333-8333-333333333202');
 
 -- Uma subscrição operacional requer auth.users. Em ambientes demo sem utilizador
--- autenticado o plano e os seus itens continuam disponíveis; após criar o primeiro
+-- autenticado a subscrição de exemplo não se cria; após criar o primeiro
 -- utilizador, este bloco pode ser executado novamente para completar o exemplo.
 do $$
 declare
@@ -138,17 +153,21 @@ declare
   v_subscription uuid := '66666666-6666-4666-8666-666666666611';
   v_cycle uuid := '66666666-6666-4666-8666-666666666612';
   v_window uuid;
+  v_subtotal integer;
 begin
   select id into v_customer from auth.users order by created_at limit 1;
   select id into v_window from public.pickup_point_collection_windows where pickup_point_id = '44444444-4444-4444-8444-444444444401' and weekday = 1 limit 1;
+  select (v1.price_cents + v2.price_cents) into v_subtotal
+  from public.product_variants v1, public.product_variants v2
+  where v1.id = '33333333-3333-4333-8333-333333333201' and v2.id = '33333333-3333-4333-8333-333333333202';
   if v_customer is not null then
-    insert into public.subscriptions (id, customer_id, subscription_plan_id, pickup_point_id, preferred_weekday, preferred_collection_window_id, status, internal_note, is_demo)
-    values (v_subscription, v_customer, '66666666-6666-4666-8666-666666666601', '44444444-4444-4444-8444-444444444401', 1, v_window, 'active', 'Subscrição de demonstração.', true)
-    on conflict (id) do update set status = 'active', internal_note = 'Subscrição de demonstração.', is_demo = true;
+    insert into public.subscriptions (id, customer_id, pickup_point_id, preferred_weekday, preferred_collection_window_id, status, frequency, subtotal_cents, discount_percent, total_cents, internal_note, is_demo)
+    values (v_subscription, v_customer, '44444444-4444-4444-8444-444444444401', 1, v_window, 'active', 'weekly', v_subtotal, 0, v_subtotal, 'Subscrição de demonstração.', true)
+    on conflict (id) do update set status = 'active', frequency = 'weekly', subtotal_cents = v_subtotal, total_cents = v_subtotal, internal_note = 'Subscrição de demonstração.', is_demo = true;
     insert into public.subscription_items (subscription_id, product_variant_id, product_name_snapshot, variant_name_snapshot, quantity, unit_price_cents_snapshot, vat_rate_snapshot, is_demo)
-    select v_subscription, v.id, p.name, v.name, i.quantity, v.price_cents, v.vat_rate, true
-    from public.subscription_plan_items i join public.product_variants v on v.id = i.product_variant_id join public.products p on p.id = v.product_id
-    where i.subscription_plan_id = '66666666-6666-4666-8666-666666666601'
+    select v_subscription, v.id, p.name, v.name, 1, v.price_cents, v.vat_rate, true
+    from public.product_variants v join public.products p on p.id = v.product_id
+    where v.id in ('33333333-3333-4333-8333-333333333201', '33333333-3333-4333-8333-333333333202')
     on conflict (subscription_id, product_variant_id) do update set quantity = excluded.quantity, is_demo = true;
     insert into public.subscription_cycles (id, subscription_id, cycle_start, cycle_end, collection_date, status, capacity_reserved, is_demo)
     values (v_cycle, v_subscription, current_date + 7, current_date + 13, current_date + 7, 'planned', false, true)

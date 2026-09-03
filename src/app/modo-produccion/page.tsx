@@ -8,7 +8,7 @@ import { getCurrentIdentity } from "@/lib/auth/session";
 import { BATCH_STATUS, loadProductionDay, nextBatchAction } from "@/lib/production-batches";
 import { formatIsoDateEs, isoToday, shiftIsoDate } from "@/lib/production-date";
 import { createClient } from "@/lib/supabase/server";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +21,7 @@ export default async function ProductionKioskPage({ searchParams }: { searchPara
   const identity = await getCurrentIdentity();
   if (!identity || !canAccessAdminSection(identity.roles, "produccion")) redirect("/cuenta/acceso-denegado");
 
+  const siteConfig = await getBrandSettings();
   const today = isoToday();
   const date = (await searchParams).fecha ?? today;
   const db: any = await createClient();

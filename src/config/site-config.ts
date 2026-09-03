@@ -53,9 +53,35 @@ export interface SiteConfig {
     country: string;
     timezone: string;
   };
-  content: Omit<SiteContent, "hero" | "footer"> & {
+  content: Omit<SiteContent, "hero" | "footer" | "home" | "obrador" | "nosotros" | "reservation" | "subscriptions" | "newsletter"> & {
     hero: Omit<SiteContent["hero"], "title" | "description"> & { title: string; description: string };
     footer: Omit<SiteContent["footer"], "description" | "legalName"> & { description: string; legalName: string };
+    home: Omit<SiteContent["home"], "craft"> & {
+      craft: Omit<SiteContent["home"]["craft"], "features"> & { features: readonly { icon: string; title: string; description: string }[] };
+    };
+    obrador: Omit<SiteContent["obrador"], "intro" | "process" | "cta"> & {
+      intro: Omit<SiteContent["obrador"]["intro"], "title" | "description"> & { title: string; description: string };
+      process: readonly { number: string; icon: string; title: string; description: string }[];
+      cta: Omit<SiteContent["obrador"]["cta"], "title"> & { title: string };
+    };
+    nosotros: Omit<SiteContent["nosotros"], "intro" | "values" | "cta"> & {
+      intro: Omit<SiteContent["nosotros"]["intro"], "title" | "description"> & { title: string; description: string };
+      values: Omit<SiteContent["nosotros"]["values"], "title" | "description" | "items"> & {
+        title: string;
+        description: string;
+        items: readonly { title: string; description: string; tone: string }[];
+      };
+      cta: Omit<SiteContent["nosotros"]["cta"], "title" | "description"> & { title: string; description: string };
+    };
+    reservation: Omit<SiteContent["reservation"], "seo"> & {
+      seo: Omit<SiteContent["reservation"]["seo"], "title" | "description"> & { title: string; description: string };
+    };
+    subscriptions: Omit<SiteContent["subscriptions"], "name" | "intro" | "steps"> & {
+      name: string;
+      intro: Omit<SiteContent["subscriptions"]["intro"], "title" | "description"> & { title: string; description: string };
+      steps: readonly { icon: string; title: string; description: string }[];
+    };
+    newsletter: Omit<SiteContent["newsletter"], "title" | "description"> & { title: string; description: string };
     images: {
       hero: string;
       obrador: string;

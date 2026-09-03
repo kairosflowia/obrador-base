@@ -3,22 +3,26 @@ import Link from "next/link";
 
 import { Breadcrumbs } from "@/components/public/breadcrumbs";
 import { BrandImage } from "@/components/media/brand-image";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { Container, Section } from "@/components/ui";
 import { ArchOvenIcon, ClockIcon, JarIcon, WheatIcon } from "@/components/ui/icons";
 import { createPageMetadata } from "@/lib/seo";
 
-const PROCESS_ICONS = { starter: JarIcon, time: ClockIcon, oven: ArchOvenIcon, grain: WheatIcon } as const;
+const PROCESS_ICONS: Record<string, typeof JarIcon> = { starter: JarIcon, time: ClockIcon, oven: ArchOvenIcon, grain: WheatIcon };
 
-export const metadata: Metadata = createPageMetadata({
-  title: siteConfig.content.obrador.seo.title,
-  description: siteConfig.content.obrador.seo.description,
-  path: "/obrador",
-  ogTitle: siteConfig.content.obrador.seo.ogTitle,
-  ogDescription: siteConfig.content.obrador.seo.ogDescription,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: siteConfig.content.obrador.seo.title,
+    description: siteConfig.content.obrador.seo.description,
+    path: "/obrador",
+    ogTitle: siteConfig.content.obrador.seo.ogTitle,
+    ogDescription: siteConfig.content.obrador.seo.ogDescription,
+  });
+}
 
-export default function ObradorPage() {
+export default async function ObradorPage() {
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.obrador;
   return (
     <main id="main-content" className="home-theme obrador-page">
@@ -48,7 +52,7 @@ export default function ObradorPage() {
         <Container size="wide" className="container--home">
           <div className="obrador-steps">
             {content.process.map(({ number, title, description, icon }) => {
-              const Icon = PROCESS_ICONS[icon];
+              const Icon = PROCESS_ICONS[icon] ?? JarIcon;
               return (
               <article key={number} className="obrador-step">
                 <div className="obrador-step__body">

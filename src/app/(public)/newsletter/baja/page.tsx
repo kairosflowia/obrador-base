@@ -4,12 +4,16 @@ import { NewsletterUnsubscribeForm } from "@/components/public/newsletter-unsubs
 import { PageIntro } from "@/components/public/page-intro";
 import { Alert, Container, Section } from "@/components/ui";
 import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
-export const metadata: Metadata = createPageMetadata({ title: "Darse de baja", description: siteConfig.content.newsletter.unsubscribe.seoDescription, path: "/newsletter/baja" });
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({ title: "Darse de baja", description: siteConfig.content.newsletter.unsubscribe.seoDescription, path: "/newsletter/baja" });
+}
 
 export default async function UnsubscribeNewsletterPage({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
   const { token } = await searchParams;
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.newsletter.unsubscribe;
 
   return (

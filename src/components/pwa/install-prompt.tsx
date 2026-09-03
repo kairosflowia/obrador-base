@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 
 import { Button } from "../ui/button";
 
@@ -11,6 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPrompt() {
+  const siteConfig = useBrand();
   const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
   const eligible = useRef(false);
@@ -46,6 +47,7 @@ export function InstallPrompt() {
 }
 
 export function IOSInstallInstructions({ show = false }: { show?: boolean }) {
+  const siteConfig = useBrand();
   if (!show) return null;
 
   return (

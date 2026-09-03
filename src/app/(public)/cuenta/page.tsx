@@ -15,9 +15,11 @@ import { ORDER_STATUS_BADGE_VARIANT, orderStatusLabel } from "@/lib/order-status
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
-export const metadata: Metadata = createPageMetadata({ title: "Mi FUERZA", description: "Tu próxima recogida, tus pedidos y tu Fuerza Habitual, en un mismo sitio.", path: "/cuenta" });
+export async function generateMetadata(): Promise<Metadata> {
+  return createPageMetadata({ title: "Mi FUERZA", description: "Tu próxima recogida, tus pedidos y tu Fuerza Habitual, en un mismo sitio.", path: "/cuenta" });
+}
 
 function initialsFor(name: string, email: string) {
   const source = name.trim() || email;
@@ -29,6 +31,7 @@ export default async function AccountPage() {
   if (!isSupabaseConfigured()) redirect("/cuenta/acceder");
   const identity = await getCurrentIdentity();
   if (!identity) redirect("/cuenta/acceder?next=/cuenta");
+  const siteConfig = await getBrandSettings();
   const supabase = await createClient();
   const today = new Date().toISOString().slice(0, 10);
 

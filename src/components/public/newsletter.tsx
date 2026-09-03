@@ -4,11 +4,12 @@ import { useActionState } from "react";
 
 import { subscribeToNewsletterAction, type NewsletterActionState } from "@/app/(public)/newsletter/actions";
 import { Alert, Button, Checkbox, Input } from "@/components/ui";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 
 const initialState: NewsletterActionState = { status: "idle" };
 
 export function Newsletter() {
+  const siteConfig = useBrand();
   const content = siteConfig.content.newsletter;
   const [state, formAction, pending] = useActionState(subscribeToNewsletterAction, initialState);
 

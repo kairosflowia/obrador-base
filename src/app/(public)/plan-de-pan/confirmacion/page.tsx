@@ -4,11 +4,12 @@ import { redirect } from "next/navigation";
 import { Container, Section } from "@/components/ui";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function SubscriptionConfirmation({ searchParams }: { searchParams: Promise<{ subscription?: string }> }) {
+  const siteConfig = await getBrandSettings();
   const identity = await getCurrentIdentity();
   if (!identity) redirect("/cuenta/acceder?next=/cuenta/plan-de-pan");
   const { subscription } = await searchParams;

@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { BrandImage } from "@/components/media/brand-image";
 
-export function HeroCarousel() {
+export async function HeroCarousel() {
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.hero;
   return (
     <section className="hero-carousel" aria-label={siteConfig.brand.name}>

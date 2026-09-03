@@ -3,7 +3,7 @@
 import Image, { type ImageProps } from "next/image";
 import { useState } from "react";
 
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 
 type BrandImageProps = Omit<ImageProps, "src"> & {
   src?: string | null;
@@ -11,10 +11,12 @@ type BrandImageProps = Omit<ImageProps, "src"> & {
 };
 
 /** Imagem configurável que nunca deixa um slot institucional visualmente partido. */
-export function BrandImage({ src, fallbackSrc = siteConfig.content.images.institutional, alt, onError, ...props }: BrandImageProps) {
-  const preferred = src?.trim() || fallbackSrc;
+export function BrandImage({ src, fallbackSrc, alt, onError, ...props }: BrandImageProps) {
+  const siteConfig = useBrand();
+  const resolvedFallback = fallbackSrc ?? siteConfig.content.images.institutional;
+  const preferred = src?.trim() || resolvedFallback;
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
-  const resolvedSrc = failedSrc === preferred ? fallbackSrc : preferred;
+  const resolvedSrc = failedSrc === preferred ? resolvedFallback : preferred;
 
   return (
     <Image
@@ -23,7 +25,7 @@ export function BrandImage({ src, fallbackSrc = siteConfig.content.images.instit
       alt={alt}
       onError={(event) => {
         onError?.(event);
-        if (resolvedSrc !== fallbackSrc) setFailedSrc(preferred);
+        if (resolvedSrc !== resolvedFallback) setFailedSrc(preferred);
       }}
     />
   );

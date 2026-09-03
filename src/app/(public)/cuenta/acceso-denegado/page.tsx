@@ -5,7 +5,9 @@ import { PageIntro } from "@/components/public/page-intro";
 import { Container, Section } from "@/components/ui";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({ title: "Acceso denegado", description: "No tienes permiso para acceder a esta zona.", path: "/cuenta/acceso-denegado" });
+export async function generateMetadata(): Promise<Metadata> {
+  return createPageMetadata({ title: "Acceso denegado", description: "No tienes permiso para acceder a esta zona.", path: "/cuenta/acceso-denegado" });
+}
 
 export default function AccessDeniedPage() {
   return (

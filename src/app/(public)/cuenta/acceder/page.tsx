@@ -11,7 +11,9 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({ title: "Acceder a tu cuenta", description: "Accede a tu cuenta FUERZA.", path: "/cuenta/acceder" });
+export async function generateMetadata(): Promise<Metadata> {
+  return createPageMetadata({ title: "Acceder a tu cuenta", description: "Accede a tu cuenta FUERZA.", path: "/cuenta/acceder" });
+}
 
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const query = await searchParams;

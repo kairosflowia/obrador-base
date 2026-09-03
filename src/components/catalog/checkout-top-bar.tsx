@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/components/ui/icons";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 import { BrandImage } from "@/components/media/brand-image";
 
 export function CheckoutTopBar() {
+  const siteConfig = useBrand();
   const router = useRouter();
 
   return (

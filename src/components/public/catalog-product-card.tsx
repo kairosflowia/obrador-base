@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import { BrandImage } from "@/components/media/brand-image";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 import { useCart } from "@/components/cart/cart-provider";
 import { Badge } from "@/components/ui/badge";
 import { availabilityReasonLabel, type AvailabilityStatus } from "@/lib/availability-domain";
@@ -33,6 +33,7 @@ export function CatalogProductCard({
   maxQuantity?: number | null;
   variant: QuickAddVariant | null;
 }) {
+  const siteConfig = useBrand();
   const cart = useCart();
   const quantity = variant ? cart.items.find((item) => item.variantId === variant.id)?.quantity ?? 0 : 0;
   const soldOut = availability?.status === "sold_out";

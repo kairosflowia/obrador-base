@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useRef, useState, type ReactElement, type SVGProps } from "react";
 
 import { adminNavigation, adminNavigationGroups, enabledAdminSections, type AdminNavIcon } from "@/lib/navigation";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 import { visibleAdminSections } from "@/lib/auth/permissions";
 import type { AppRole } from "@/lib/supabase/database.types";
 import {
@@ -23,6 +23,7 @@ import {
   PinIcon,
   RepeatIcon,
   ShieldIcon,
+  SwatchIcon,
   UserIcon,
   UsersIcon,
 } from "@/components/ui/icons";
@@ -51,6 +52,7 @@ const NAV_ICONS: Record<AdminNavIcon, (props: SVGProps<SVGSVGElement>) => ReactE
   users: UsersIcon,
   gear: GearIcon,
   shield: ShieldIcon,
+  swatch: SwatchIcon,
 };
 
 function AdminLinks({ roles, onNavigate }: { roles: readonly AppRole[]; onNavigate?: () => void }) {
@@ -94,6 +96,7 @@ function AdminLinks({ roles, onNavigate }: { roles: readonly AppRole[]; onNaviga
 }
 
 export function AdminSidebar({ roles }: { roles: readonly AppRole[] }) {
+  const siteConfig = useBrand();
   return (
     <aside className="admin-sidebar">
       <Link className="admin-brand" href="/admin">{siteConfig.brand.shortName} <span>obrador</span></Link>

@@ -5,7 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { Container, Section } from "@/components/ui/layout";
 import { PageIntro } from "@/components/public/page-intro";
-import { isLegalSlug, isPendingBlock, legalPages, resolveTitularBlock, type LegalOwnerIdentity } from "@/lib/legal-pages";
+import { getLegalPages, isLegalSlug, isPendingBlock, LEGAL_SLUGS, resolveTitularBlock, type LegalOwnerIdentity } from "@/lib/legal-pages";
 import { createPageMetadata } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,7 +22,7 @@ const IDENTITY_HEADING: Record<string, string> = {
 };
 
 export function generateStaticParams() {
-  return Object.keys(legalPages).map((legal) => ({ legal }));
+  return LEGAL_SLUGS.map((legal) => ({ legal }));
 }
 
 async function loadOwnerIdentity(): Promise<LegalOwnerIdentity | null> {
@@ -47,19 +47,21 @@ async function loadOwnerIdentity(): Promise<LegalOwnerIdentity | null> {
 export async function generateMetadata({ params }: LegalPageProps): Promise<Metadata> {
   const { legal } = await params;
   if (!isLegalSlug(legal)) return {};
+  const legalPages = await getLegalPages();
   const page = legalPages[legal];
-  return createPageMetadata({ title: page.title, description: page.description, path: `/${legal}` });
+  return await createPageMetadata({ title: page.title, description: page.description, path: `/${legal}` });
 }
 
 export default async function LegalPage({ params }: LegalPageProps) {
   const { legal } = await params;
   if (!isLegalSlug(legal)) notFound();
+  const legalPages = await getLegalPages();
   const page = legalPages[legal];
 
   let content = page.content;
   if (IDENTITY_SLUGS.has(legal)) {
     const identity = await loadOwnerIdentity();
-    content = [resolveTitularBlock(IDENTITY_HEADING[legal], identity), ...page.content.slice(1)];
+    content = [await resolveTitularBlock(IDENTITY_HEADING[legal], identity), ...page.content.slice(1)];
   }
 
   return (

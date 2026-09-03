@@ -44,16 +44,17 @@ describe("navigation contracts", () => {
   });
 
   it("defines every structural admin route without invented records", () => {
-    expect(adminNavigation).toHaveLength(16);
+    expect(adminNavigation).toHaveLength(17);
     expect(adminNavigation.map(({ slug }) => slug)).toContain("produccion");
     expect(adminNavigation.map(({ slug }) => slug)).toContain("auditoria");
     expect(adminNavigation.map(({ slug }) => slug)).toContain("analitica");
+    expect(adminNavigation.map(({ slug }) => slug)).toContain("marca");
   });
 });
 
 describe("PWA and metadata contracts", () => {
-  it("provides an installable standalone manifest", () => {
-    const value = manifest();
+  it("provides an installable standalone manifest", async () => {
+    const value = await manifest();
     expect(value.name).toBe("OBRADOR BASE");
     expect(value.display).toBe("standalone");
     expect(value.start_url).toBe("/");

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { BrandImage } from "@/components/media/brand-image";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { formatPrice } from "@/lib/catalog-domain";
 
 import { cn } from "@/lib/cn";
@@ -14,7 +14,8 @@ export function EditorialGrid({ children, columns = 3 }: { children: ReactNode; 
 
 export type PillarIcon = "tradicion" | "ingredientes" | "tiempo" | "comunidad";
 
-export function ValueCard({ number, icon, image, title, children, tone = "plain" }: { number?: string; icon?: PillarIcon; image?: string; title: string; children: ReactNode; tone?: "plain" | "yellow" | "green" | "blue" | "terracotta" }) {
+export async function ValueCard({ number, icon, image, title, children, tone = "plain" }: { number?: string; icon?: PillarIcon; image?: string; title: string; children: ReactNode; tone?: "plain" | "yellow" | "green" | "blue" | "terracotta" }) {
+  const siteConfig = await getBrandSettings();
   return (
     <article className={cn("value-card", `value-card--${tone}`, image && "value-card--image")} tabIndex={image ? 0 : undefined}>
       {image ? (
@@ -36,7 +37,8 @@ export function ValueCard({ number, icon, image, title, children, tone = "plain"
   );
 }
 
-export function EditorialProductPreview({ href, name, description, imagePath, imageAlt, priceCents }: { href: string; name: string; description: string | null; imagePath: string | null; imageAlt: string; priceCents: number | null }) {
+export async function EditorialProductPreview({ href, name, description, imagePath, imageAlt, priceCents }: { href: string; name: string; description: string | null; imagePath: string | null; imageAlt: string; priceCents: number | null }) {
+  const siteConfig = await getBrandSettings();
   return (
     <Link href={href} className="editorial-product">
       <span className="editorial-product__image">

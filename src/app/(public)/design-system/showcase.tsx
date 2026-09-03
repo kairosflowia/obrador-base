@@ -25,12 +25,7 @@ import {
   ToastProvider,
   useToast,
 } from "@/components/ui";
-import { siteConfig } from "@/config/site-config";
-
-const colors = [
-  ["Fondo", siteConfig.brand.colors.background], ["Texto", siteConfig.brand.colors.foreground], ["Principal", siteConfig.brand.colors.primary],
-  ["Acento", siteConfig.brand.colors.accent], ["Éxito", siteConfig.brand.colors.success], ["Información", siteConfig.brand.colors.information],
-] as const;
+import { useBrand } from "@/components/brand/brand-provider";
 
 export function DesignSystemDemo() {
   return (
@@ -41,6 +36,7 @@ export function DesignSystemDemo() {
 }
 
 function DesignSystemDemoContent() {
+  const siteConfig = useBrand();
   const [modalOpen, setModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -48,6 +44,11 @@ function DesignSystemDemoContent() {
   const drawerTrigger = useRef<HTMLButtonElement>(null);
   const confirmTrigger = useRef<HTMLButtonElement>(null);
   const { push } = useToast();
+
+  const colors = [
+    ["Fondo", siteConfig.brand.colors.background], ["Texto", siteConfig.brand.colors.foreground], ["Principal", siteConfig.brand.colors.primary],
+    ["Acento", siteConfig.brand.colors.accent], ["Éxito", siteConfig.brand.colors.success], ["Información", siteConfig.brand.colors.information],
+  ] as const;
 
   return (
     <main id="main-content">

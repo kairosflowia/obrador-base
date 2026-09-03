@@ -19,7 +19,7 @@ describe("neutral demo data seed", () => {
     ]) {
       expect(migration).toContain(product);
     }
-    for (const table of ["product_families", "product_variants", "production_dates", "orders", "demo_customers", "subscription_plans"]) {
+    for (const table of ["product_families", "product_variants", "production_dates", "orders", "demo_customers", "subscriptions", "subscription_items"]) {
       expect(migration).toContain(`public.${table}`);
     }
   });

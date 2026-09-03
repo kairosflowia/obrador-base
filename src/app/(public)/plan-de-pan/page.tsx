@@ -3,25 +3,29 @@ import Link from "next/link";
 
 import { SectionHeading } from "@/components/public/editorial";
 import { BrandImage } from "@/components/media/brand-image";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { PageIntro } from "@/components/public/page-intro";
 import { CalendarIcon, PackageIcon, WheatIcon } from "@/components/ui/icons";
 import { Container, Section } from "@/components/ui";
 import { FREQUENCY_DESCRIPTIONS_ES, FREQUENCY_LABELS_ES, type SubscriptionFrequency } from "@/lib/subscriptions-domain";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({
-  title: siteConfig.content.subscriptions.seo.title,
-  description: siteConfig.content.subscriptions.seo.description,
-  path: "/plan-de-pan",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: siteConfig.content.subscriptions.seo.title,
+    description: siteConfig.content.subscriptions.seo.description,
+    path: "/plan-de-pan",
+  });
+}
 
-const STEP_ICONS = { grain: WheatIcon, calendar: CalendarIcon, package: PackageIcon } as const;
+const STEP_ICONS: Record<string, typeof WheatIcon> = { grain: WheatIcon, calendar: CalendarIcon, package: PackageIcon };
 
 const FREQUENCIES: SubscriptionFrequency[] = ["weekly", "biweekly", "every_3_weeks", "monthly"];
 const FEATURED_FREQUENCY: SubscriptionFrequency = "biweekly";
 
-export default function PlanDePanLanding() {
+export default async function PlanDePanLanding() {
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.subscriptions;
   return (
     <main id="main-content">
@@ -55,7 +59,7 @@ export default function PlanDePanLanding() {
           <SectionHeading {...content.processHeading} />
           <div className="plan-steps">
             {content.steps.map(({ icon, title, description }) => {
-              const Icon = STEP_ICONS[icon];
+              const Icon = STEP_ICONS[icon] ?? WheatIcon;
               return (
               <article key={title} className="plan-step">
                 <span className="plan-step__icon" aria-hidden="true"><Icon /></span>

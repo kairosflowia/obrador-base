@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 
 import { Alert, Badge, Button, Card, Select } from "@/components/ui";
 import { formatPrice } from "@/lib/catalog-domain";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 import {
   basketDiscountPercent,
   FREQUENCY_DESCRIPTIONS_ES,
@@ -26,6 +26,7 @@ type VariantOption = { id: string; name: string; priceCents: number; imagePath: 
 type PickupPoint = { id: string; name: string };
 
 function SubscriptionPayment({ subscriptionId }: { subscriptionId: string }) {
+  const siteConfig = useBrand();
   const stripe = useStripe();
   const elements = useElements();
   const [busy, setBusy] = useState(false);
@@ -57,6 +58,7 @@ function SubscriptionPayment({ subscriptionId }: { subscriptionId: string }) {
 }
 
 export function BasketConfigurator({ variants, pickupPoints, initialFrequency }: { variants: VariantOption[]; pickupPoints: PickupPoint[]; initialFrequency?: SubscriptionFrequency }) {
+  const siteConfig = useBrand();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [frequency, setFrequency] = useState<SubscriptionFrequency>(initialFrequency ?? "weekly");
   const [pickupPointId, setPickupPointId] = useState("");

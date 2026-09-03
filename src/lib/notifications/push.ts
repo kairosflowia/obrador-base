@@ -1,10 +1,10 @@
 import { getPushProvider } from "@/lib/notifications/push-provider";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const supportedEvents = new Set(["order-confirmed", "payment-failed", "order-ready", "order-cancelled", "pickup-reminder", "pickup-window-changed", "subscription-started", "subscription-payment-failed", "subscription-action-required", "subscription-cycle-confirmed"]);
 
-function payloadFor(event: any) {
+async function payloadFor(event: any) {
   const link = event.entity_type === "subscriptions" ? `/cuenta/plan-de-pan/${event.entity_id}` : "/cuenta";
   const messages: Record<string, [string, string]> = {
     "order-confirmed": ["Pedido confirmado", `Tu pedido ${event.payload?.order_code ?? ""} está confirmado.`],
@@ -18,6 +18,7 @@ function payloadFor(event: any) {
     "subscription-action-required": ["Acción necesaria", "Revisa tu Plan de Pan."],
     "subscription-cycle-confirmed": ["Recogida confirmada", "Tu próximo ciclo está confirmado."],
   };
+  const siteConfig = await getBrandSettings();
   const [title, body] = messages[event.event_key] ?? [siteConfig.brand.name, "Tienes una actualización."];
   return JSON.stringify({ title, body, icon: siteConfig.brand.icon, badge: siteConfig.brand.icon, tag: `${event.event_key}:${event.entity_id}`, url: link });
 }
@@ -37,7 +38,7 @@ export async function processPushNotifications(limit = 50) {
     for (const device of devices ?? []) {
       const { data: last } = await db.from("notification_deliveries").select("attempt_number,status").eq("notification_event_id", event.id).eq("channel", "push").eq("push_subscription_id", device.id).order("attempt_number", { ascending: false }).limit(1).maybeSingle();
       if (["sent", "delivered"].includes(last?.status) || Number(last?.attempt_number) >= 3) continue;
-      const result = await provider.send(device, payloadFor(event));
+      const result = await provider.send(device, await payloadFor(event));
       await db.from("notification_deliveries").insert({ notification_event_id: event.id, provider: process.env.PUSH_PROVIDER ?? "fake", recipient_email: "[push]", channel: "push", push_subscription_id: device.id, status: result.ok ? "sent" : "failed", attempt_number: Number(last?.attempt_number ?? 0) + 1, error_code: result.error, sent_at: result.ok ? new Date().toISOString() : null });
       if (result.invalid) await db.from("push_subscriptions").update({ status: "invalid" }).eq("id", device.id);
       if (result.ok) sent += 1;

@@ -7,7 +7,9 @@ import { PageIntro } from "@/components/public/page-intro";
 import { Container, Section } from "@/components/ui";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({ title: "Crear una cuenta", description: "Crea tu cuenta FUERZA.", path: "/cuenta/crear" });
+export async function generateMetadata(): Promise<Metadata> {
+  return createPageMetadata({ title: "Crear una cuenta", description: "Crea tu cuenta FUERZA.", path: "/cuenta/crear" });
+}
 
 export default function SignUpPage() {
   return (

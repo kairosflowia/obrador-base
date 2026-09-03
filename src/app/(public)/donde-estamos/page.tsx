@@ -11,14 +11,19 @@ import {
   getPublicPickupPoints,
   mainBakery,
 } from "@/lib/pickup-points";
-import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site-config";
+import type { Metadata } from "next";
 
-export const metadata = createPageMetadata({
-  title: siteConfig.content.location.seo.title,
-  description: siteConfig.content.location.seo.description,
-  path: "/donde-estamos",
-});
+import { createPageMetadata } from "@/lib/seo";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: siteConfig.content.location.seo.title,
+    description: siteConfig.content.location.seo.description,
+    path: "/donde-estamos",
+  });
+}
 
 function timeRange(start: string | null, end: string | null) {
   if (!start || !end) return null;
@@ -26,6 +31,7 @@ function timeRange(start: string | null, end: string | null) {
 }
 
 export default async function DondeEstamosPage() {
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.location;
   const { points } = await getPublicPickupPoints();
   const bakery = mainBakery(points);

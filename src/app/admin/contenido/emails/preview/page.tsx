@@ -1,7 +1,8 @@
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
-export default function Preview() {
+export default async function Preview() {
+  const siteConfig = await getBrandSettings();
   return <>
     <AdminPageHeader title="Previsualización de email" description="Usa datos de ejemplo explícitamente técnicos; no se envía ningún mensaje." />
     <div style={{ background: siteConfig.brand.colors.background, color: siteConfig.brand.colors.foreground, padding: 32, maxWidth: 600 }}>

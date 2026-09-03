@@ -4,11 +4,12 @@ import { useActionState } from "react";
 
 import { unsubscribeNewsletterAction, type NewsletterActionState } from "@/app/(public)/newsletter/actions";
 import { Alert, Button, Textarea } from "@/components/ui";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 
 const initialState: NewsletterActionState = { status: "idle" };
 
 export function NewsletterUnsubscribeForm({ token }: { token: string }) {
+  const siteConfig = useBrand();
   const [state, formAction, pending] = useActionState(unsubscribeNewsletterAction, initialState);
 
   if (state.status === "success") {

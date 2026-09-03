@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site-config";
+import { siteConfig, type SiteConfig } from "@/config/site-config";
 import type { FeatureKey } from "@/config/feature-config";
 import { isAdminSectionEnabled } from "@/lib/features";
 
@@ -10,6 +10,18 @@ export const publicNavigation = [
   { label: "Dónde estamos", href: "/donde-estamos", feature: "pickupPoints" },
   { label: "Contacto", href: "/contacto" },
 ] as const satisfies readonly { label: string; href: string; feature?: FeatureKey }[];
+
+export function getVisiblePublicNavigation(brand: SiteConfig) {
+  const items = [
+    { label: "Inicio", href: "/" },
+    { label: "Pan", href: "/pan", feature: "catalog" },
+    { label: "Reserva y recoge", href: "/reserva-y-recoge", feature: "onlineOrders" },
+    { label: brand.content.subscriptions.name, href: "/plan-de-pan", feature: "subscriptions" },
+    { label: "Dónde estamos", href: "/donde-estamos", feature: "pickupPoints" },
+    { label: "Contacto", href: "/contacto" },
+  ] as const satisfies readonly { label: string; href: string; feature?: FeatureKey }[];
+  return items.filter((item) => !("feature" in item) || brand.features[item.feature]);
+}
 
 export const visiblePublicNavigation = publicNavigation.filter((item) => !("feature" in item) || siteConfig.features[item.feature]);
 
@@ -64,6 +76,7 @@ export const adminNavigation = [
   { slug: "mensajes", label: "Mensajes", shortLabel: "Mensajes", description: "Consultas recibidas desde el formulario de contacto.", group: "negocio", icon: "mail" },
   { slug: "comunicaciones", label: "Comunicaciones", shortLabel: "Avisos", description: "Consulta la cola, entregas y fallos transaccionales.", group: "negocio", icon: "mail" },
   { slug: "contenido", label: "Contenido", shortLabel: "Contenido", description: "Mantén los textos e imágenes institucionales permitidos.", group: "configuracion", icon: "document" },
+  { slug: "marca", label: "Marca", shortLabel: "Marca", description: "Identidad visual, contacto y textos institucionales del portal.", group: "configuracion", icon: "swatch" },
   { slug: "usuarios", label: "Usuarios", shortLabel: "Usuarios", description: "Gestiona usuarios y permisos del equipo.", group: "configuracion", icon: "users" },
   { slug: "configuracion", label: "Configuración", shortLabel: "Ajustes", description: "Ajusta las reglas generales y datos del portal.", group: "configuracion", icon: "gear" },
   { slug: "auditoria", label: "Auditoría", shortLabel: "Auditoría", description: "Consulta el historial de acciones relevantes.", group: "configuracion", icon: "shield" },

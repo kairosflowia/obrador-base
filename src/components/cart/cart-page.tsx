@@ -6,7 +6,7 @@ import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-
 import { loadStripe } from "@stripe/stripe-js";
 
 import { Alert, Button, Checkbox, EmptyState, Input, Select } from "@/components/ui";
-import { siteConfig } from "@/config/site-config";
+import { useBrand } from "@/components/brand/brand-provider";
 import { TrashIcon } from "@/components/ui/icons";
 import { availabilityReasonLabel } from "@/lib/availability-domain";
 import { formatPrice } from "@/lib/catalog-domain";
@@ -15,11 +15,12 @@ import { PICKUP_DATE_COOKIE, PICKUP_POINT_COOKIE } from "@/lib/pickup-selection"
 
 import { useCart } from "./cart-provider";
 
-const stripePromise = !siteConfig.demoMode && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) : null;
-const appearance = {
-  theme: "stripe" as const,
-  variables: { colorPrimary: siteConfig.brand.colors.primary, colorText: siteConfig.brand.colors.foreground, borderRadius: siteConfig.brand.radius.medium, fontFamily: siteConfig.brand.fonts.body },
-};
+let stripePromiseCache: ReturnType<typeof loadStripe> | null = null;
+function getStripePromise(demoMode: boolean) {
+  if (demoMode || !process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) return null;
+  if (!stripePromiseCache) stripePromiseCache = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  return stripePromiseCache;
+}
 
 function setCookie(name: string, value: string) {
   const secure = location.protocol === "https:" ? "; Secure" : "";
@@ -99,6 +100,12 @@ export function CartPageClient({
   initialEmail?: string;
   initialPhone?: string;
 }) {
+  const siteConfig = useBrand();
+  const stripePromise = getStripePromise(siteConfig.demoMode);
+  const appearance = {
+    theme: "stripe" as const,
+    variables: { colorPrimary: siteConfig.brand.colors.primary, colorText: siteConfig.brand.colors.foreground, borderRadius: siteConfig.brand.radius.medium, fontFamily: siteConfig.brand.fonts.body },
+  };
   const cart = useCart();
   const [point, setPoint] = useState(initialPoint);
   const [date, setDate] = useState(initialDate);

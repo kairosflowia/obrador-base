@@ -7,7 +7,7 @@ import { safeReturnPath } from "@/lib/auth/redirects";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export interface AuthActionState {
   status: "idle" | "error" | "success";
@@ -63,6 +63,7 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
 }
 
 export async function signUpAction(_state: AuthActionState, formData: FormData): Promise<AuthActionState> {
+  const siteConfig = await getBrandSettings();
   if (siteConfig.demoMode) return { status: "error", message: "La creación de cuentas está desactivada en esta demo." };
   if (!(await enforceRateLimit("auth.signup", 5, 3600)).allowed) return { status:"error",message:"Demasiadas solicitudes. Inténtalo más tarde." };
   if (!isSupabaseConfigured()) return unavailable();
@@ -85,6 +86,7 @@ export async function signUpAction(_state: AuthActionState, formData: FormData):
 }
 
 export async function requestPasswordResetAction(_state: AuthActionState, formData: FormData): Promise<AuthActionState> {
+  const siteConfig = await getBrandSettings();
   if (siteConfig.demoMode) return { status: "success", message: "La demo no envía correos. Utiliza las credenciales de acceso facilitadas." };
   if (!(await enforceRateLimit("auth.recovery", 5, 3600)).allowed) return { status:"success",message:"Si existe una cuenta con ese correo, recibirás instrucciones para continuar." };
   if (!isSupabaseConfigured()) return unavailable();

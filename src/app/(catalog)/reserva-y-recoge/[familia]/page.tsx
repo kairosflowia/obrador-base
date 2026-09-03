@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ familia: 
   const catalog = await getPublicCatalog();
   const family = catalog.find((p) => p.family?.slug === familia)?.family;
   if (!family) return {};
-  return createPageMetadata({ title: family.name, description: `Productos de ${family.name} disponibles para reservar y recoger.`, path: `/reserva-y-recoge/${family.slug}` });
+  return await createPageMetadata({ title: family.name, description: `Productos de ${family.name} disponibles para reservar y recoger.`, path: `/reserva-y-recoge/${family.slug}` });
 }
 
 export default async function CategoriaPage({ params }: { params: Promise<{ familia: string }> }) {

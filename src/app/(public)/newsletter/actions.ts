@@ -5,7 +5,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { siteOrigin } from "@/lib/site-url";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export interface NewsletterActionState {
   status: "idle" | "error" | "success";
@@ -53,6 +53,7 @@ export async function subscribeToNewsletterAction(_state: NewsletterActionState,
   if (error || !result?.ok) {
     return { status: "error", message: "No hemos podido completar la suscripción. Inténtalo más tarde." };
   }
+  const siteConfig = await getBrandSettings();
   return { status: "success", message: siteConfig.content.newsletter.successMessage };
 }
 
@@ -76,6 +77,7 @@ export async function confirmNewsletterAction(_state: NewsletterActionState, for
   if (error || !result?.ok) {
     return { status: "error", message: "El enlace ha caducado o no es válido. Vuelve a suscribirte para recibir uno nuevo." };
   }
+  const siteConfig = await getBrandSettings();
   return { status: "success", message: siteConfig.content.newsletter.confirmedMessage };
 }
 
@@ -93,5 +95,6 @@ export async function unsubscribeNewsletterAction(_state: NewsletterActionState,
   if (error || !result?.ok) {
     return { status: "error", message: "No hemos podido procesar la baja. El enlace puede haber caducado." };
   }
+  const siteConfig = await getBrandSettings();
   return { status: "success", message: siteConfig.content.newsletter.unsubscribedMessage };
 }

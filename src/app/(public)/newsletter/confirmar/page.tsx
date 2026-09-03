@@ -4,12 +4,16 @@ import { NewsletterConfirmForm } from "@/components/public/newsletter-confirm-fo
 import { PageIntro } from "@/components/public/page-intro";
 import { Alert, Container, Section } from "@/components/ui";
 import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
-export const metadata: Metadata = createPageMetadata({ title: "Confirmar suscripción", description: siteConfig.content.newsletter.confirmation.seoDescription, path: "/newsletter/confirmar" });
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({ title: "Confirmar suscripción", description: siteConfig.content.newsletter.confirmation.seoDescription, path: "/newsletter/confirmar" });
+}
 
 export default async function ConfirmNewsletterPage({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
   const { token } = await searchParams;
+  const siteConfig = await getBrandSettings();
   const content = siteConfig.content.newsletter.confirmation;
 
   return (

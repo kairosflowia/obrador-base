@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 import { PublicFooter } from "@/components/public/public-footer";
 import { PublicHeader } from "@/components/public/public-header";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { PwaRegister } from "@/components/pwa/pwa-register";
 
-export default function PublicLayout({ children }: { children: ReactNode }) {
+export default async function PublicLayout({ children }: { children: ReactNode }) {
+  const siteConfig = await getBrandSettings();
   const websiteData = {
     "@context": "https://schema.org",
     "@type": "WebSite",

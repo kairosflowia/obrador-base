@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
-import { legalPages } from "@/lib/legal-pages";
+import { getLegalPages } from "@/lib/legal-pages";
 import { accountRoutes, adminNavigation, publicRoutes } from "@/lib/navigation";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -95,7 +95,8 @@ describe("public route architecture", () => {
 });
 
 describe("public content safeguards", () => {
-  it("keeps legal pages complete but never fabricates the owner's real identity data", () => {
+  it("keeps legal pages complete but never fabricates the owner's real identity data", async () => {
+    const legalPages = await getLegalPages();
     expect(Object.keys(legalPages)).toEqual([
       "aviso-legal",
       "privacidad",
@@ -145,8 +146,8 @@ describe("public content safeguards", () => {
 });
 
 describe("SEO publication contracts", () => {
-  it("creates canonical and Open Graph metadata", () => {
-    const metadata = createPageMetadata({ title: "Pan", description: "Pan de masa madre", path: "/pan" });
+  it("creates canonical and Open Graph metadata", async () => {
+    const metadata = await createPageMetadata({ title: "Pan", description: "Pan de masa madre", path: "/pan" });
     expect(metadata.alternates).toEqual({ canonical: "/pan" });
     expect(metadata.openGraph).toMatchObject({ title: "Pan", url: "/pan", locale: "es_ES" });
   });

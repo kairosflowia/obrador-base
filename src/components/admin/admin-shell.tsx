@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { signOutAction } from "@/app/(public)/cuenta/actions";
 import type { AppRole } from "@/lib/supabase/database.types";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { resetDemoDataAction } from "@/app/admin/demo-actions";
 
 import { Button } from "../ui/button";
@@ -23,7 +23,8 @@ function primaryRoleLabel(roles: readonly AppRole[]) {
   return role ? ROLE_LABEL_ES[role] : "Equipo";
 }
 
-export function AdminHeader({ email, fullName, roles }: { email: string; fullName: string | null; roles: readonly AppRole[] }) {
+export async function AdminHeader({ email, fullName, roles }: { email: string; fullName: string | null; roles: readonly AppRole[] }) {
+  const siteConfig = await getBrandSettings();
   const displayName = fullName?.trim() || email;
   const initial = displayName.charAt(0).toUpperCase();
   return (

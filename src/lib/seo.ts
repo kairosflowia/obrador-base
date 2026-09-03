@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 interface PageSeo {
   title: string;
@@ -9,13 +9,14 @@ interface PageSeo {
   ogDescription?: string;
 }
 
-export function createPageMetadata({
+export async function createPageMetadata({
   title,
   description,
   path,
   ogTitle = title,
   ogDescription = description,
-}: PageSeo): Metadata {
+}: PageSeo): Promise<Metadata> {
+  const siteConfig = await getBrandSettings();
   return {
     title,
     description,

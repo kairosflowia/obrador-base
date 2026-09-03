@@ -2,11 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 
-import { siteConfig } from "@/config/site-config";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 export async function resetDemoDataAction() {
+  const siteConfig = await getBrandSettings();
   if (!siteConfig.demoMode) throw new Error("demo_mode_disabled");
   const identity = await getCurrentIdentity();
   if (!identity || !identity.roles.some((role) => role === "owner" || role === "admin")) throw new Error("forbidden");

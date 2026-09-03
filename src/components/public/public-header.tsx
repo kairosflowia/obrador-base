@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
 
-import { visiblePublicNavigation } from "@/lib/navigation";
-import { siteConfig } from "@/config/site-config";
+import { getVisiblePublicNavigation } from "@/lib/navigation";
+import { useBrand } from "@/components/brand/brand-provider";
 import { BrandImage } from "@/components/media/brand-image";
 
 import { Button } from "../ui/button";
@@ -15,6 +15,8 @@ import { CartLink } from "../cart/cart-link";
 import { MiniCart } from "../cart/mini-cart";
 
 export function PublicHeader() {
+  const siteConfig = useBrand();
+  const visiblePublicNavigation = getVisiblePublicNavigation(siteConfig);
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
