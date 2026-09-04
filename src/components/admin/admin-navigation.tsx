@@ -74,7 +74,7 @@ function AdminLinks({ roles, onNavigate }: { roles: readonly AppRole[]; onNaviga
           <div className="admin-nav__group" key={group.key}>
             <p className="admin-nav__heading">{group.label}</p>
             {items.map((item) => {
-              const href = `/admin/${item.slug}`;
+              const href = "href" in item ? item.href : `/admin/${item.slug}`;
               const Icon = NAV_ICONS[item.icon];
               return (
                 <Link
@@ -119,7 +119,7 @@ export function AdminMobileNavigation({ roles }: { roles: readonly AppRole[] }) 
       <nav className="admin-mobile-bar" aria-label="Accesos administrativos rápidos">
         <Link href="/admin" aria-current={pathname === "/admin" ? "page" : undefined}>Hoy</Link>
         {primaryItems.map((item) => {
-          const href = `/admin/${item.slug}`;
+          const href = "href" in item ? item.href : `/admin/${item.slug}`;
           return (
             <Link href={href} key={item.slug} aria-current={pathname === href ? "page" : undefined}>
               {item.shortLabel}

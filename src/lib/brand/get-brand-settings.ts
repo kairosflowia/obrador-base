@@ -4,9 +4,11 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
 
 import { fontCssVar } from "@/config/font-options";
+import { featureKeys, resolveFeatureFlags, type FeatureFlags } from "@/config/feature-config";
 import { siteConfig, type SiteConfig } from "@/config/site-config";
 import type { Database } from "@/lib/supabase/database.types";
 import { getSupabasePublicEnvironment, isSupabaseConfigured } from "@/lib/supabase/env";
+import { FEATURE_SETTING_KEY } from "./feature-settings";
 
 function publicClient() {
   const { url, anonKey } = getSupabasePublicEnvironment();
@@ -30,14 +32,28 @@ async function loadBrandSettings(): Promise<SiteConfig> {
   if (!isSupabaseConfigured()) return siteConfig;
 
   const db = publicClient();
-  const { data } = await db.from("app_settings").select("key,value").like("key", "marca.%");
+  const { data } = await db.from("app_settings").select("key,value").or("key.like.marca.%,key.like.features.%");
   const raw = new Map((data ?? []).map((row) => [row.key, row.value]));
   const get = (key: string, fallback: string) => str(raw.get(key), fallback);
 
   const base = siteConfig;
 
+  // Los overrides de features.* reemplazan el valor solicitado por
+  // feature-config.ts (env/preset), pero SIEMPRE se vuelven a pasar por
+  // resolveFeatureFlags(): así ninguna combinación guardada en DB puede
+  // dejar el sitio en un estado inconsistente (p.ej. onlineOrders activo
+  // sin payments), aunque el admin de /funcionalidades ya evite guardar
+  // combinaciones así en primer lugar.
+  const requestedFeatures = { ...base.features };
+  for (const key of featureKeys) {
+    const raw_ = raw.get(FEATURE_SETTING_KEY[key]);
+    if (typeof raw_ === "boolean") requestedFeatures[key] = raw_;
+  }
+  const features: FeatureFlags = resolveFeatureFlags(requestedFeatures);
+
   return {
     ...base,
+    features,
     brand: {
       ...base.brand,
       name: get("marca.brand_name", base.brand.name),
