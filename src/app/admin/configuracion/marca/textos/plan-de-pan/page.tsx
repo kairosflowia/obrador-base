@@ -31,7 +31,7 @@ async function save(form: FormData) {
   const db = createAdminClient() as any;
   for (const [key] of scalarFields) {
     const value = String(form.get(key) ?? "").trim();
-    await db.from("app_settings").update({ value: JSON.stringify(value), is_public: true, updated_by: identity.user.id }).eq("key", key);
+    await db.from("app_settings").update({ value, is_public: true, updated_by: identity.user.id }).eq("key", key);
   }
   const items = DEFAULT_STEPS.map((step, i) => ({
     icon: String(form.get(`step_icon_${i}`) ?? step.icon),
@@ -39,7 +39,7 @@ async function save(form: FormData) {
     description: String(form.get(`step_description_${i}`) ?? "").trim(),
   })).filter((item) => item.title);
   if (items.length) {
-    await db.from("app_settings").update({ value: JSON.stringify(items), is_public: true, updated_by: identity.user.id }).eq("key", STEPS_KEY);
+    await db.from("app_settings").update({ value: items, is_public: true, updated_by: identity.user.id }).eq("key", STEPS_KEY);
   }
   revalidateTag("brand-settings", "max");
   revalidatePath("/", "layout");

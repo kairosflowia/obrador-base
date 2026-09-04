@@ -57,7 +57,7 @@ export async function setFeatureFlagAction(feature: keyof FeatureFlags, enabled:
   for (const key of featureKeys) {
     await db
       .from("app_settings")
-      .update({ value: JSON.stringify(resolved[key]), is_public: true, updated_by: identity.user.id })
+      .update({ value: resolved[key], is_public: true, updated_by: identity.user.id })
       .eq("key", FEATURE_SETTING_KEY[key]);
   }
 

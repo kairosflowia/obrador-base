@@ -20,7 +20,7 @@ async function save(form: FormData) {
   const db = createAdminClient() as any;
   for (const [key] of fields) {
     const value = String(form.get(key) ?? "").trim();
-    await db.from("app_settings").update({ value: JSON.stringify(value), is_public: true, updated_by: identity.user.id }).eq("key", key);
+    await db.from("app_settings").update({ value, is_public: true, updated_by: identity.user.id }).eq("key", key);
   }
   revalidateTag("brand-settings", "max");
   revalidatePath("/", "layout");

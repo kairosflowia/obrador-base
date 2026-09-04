@@ -39,7 +39,7 @@ export async function uploadBrandImageAction(formData: FormData) {
   const { data: pub } = db.storage.from("brand-assets").getPublicUrl(path);
   await db
     .from("app_settings")
-    .update({ value: JSON.stringify(pub.publicUrl), is_public: true, updated_by: identity.user.id })
+    .update({ value: pub.publicUrl, is_public: true, updated_by: identity.user.id })
     .eq("key", settingKey);
 
   revalidateTag("brand-settings", "max");

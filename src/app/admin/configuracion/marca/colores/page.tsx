@@ -26,7 +26,7 @@ async function save(form: FormData) {
   const keys = ["marca.color_primary", "marca.color_secondary", "marca.color_background", "marca.color_accent", "marca.font_display", "marca.font_body"] as const;
   for (const key of keys) {
     const value = String(form.get(key) ?? "").trim();
-    await db.from("app_settings").update({ value: JSON.stringify(value), is_public: true, updated_by: identity.user.id }).eq("key", key);
+    await db.from("app_settings").update({ value, is_public: true, updated_by: identity.user.id }).eq("key", key);
   }
   revalidateTag("brand-settings", "max");
   revalidatePath("/", "layout");

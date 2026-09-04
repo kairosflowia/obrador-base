@@ -35,7 +35,7 @@ async function save(form: FormData) {
   const db = createAdminClient() as any;
   for (const [key] of scalarFields) {
     const value = String(form.get(key) ?? "").trim();
-    await db.from("app_settings").update({ value: JSON.stringify(value), is_public: true, updated_by: identity.user.id }).eq("key", key);
+    await db.from("app_settings").update({ value, is_public: true, updated_by: identity.user.id }).eq("key", key);
   }
   const items = DEFAULT_VALUES.map((_, i) => ({
     title: String(form.get(`value_title_${i}`) ?? "").trim(),
@@ -43,7 +43,7 @@ async function save(form: FormData) {
     tone: String(form.get(`value_tone_${i}`) ?? "plain"),
   })).filter((item) => item.title);
   if (items.length) {
-    await db.from("app_settings").update({ value: JSON.stringify(items), is_public: true, updated_by: identity.user.id }).eq("key", VALUES_KEY);
+    await db.from("app_settings").update({ value: items, is_public: true, updated_by: identity.user.id }).eq("key", VALUES_KEY);
   }
   revalidateTag("brand-settings", "max");
   revalidatePath("/", "layout");
