@@ -41,7 +41,7 @@ export function FamilyForm({ defaults, onSaved }: { defaults?: FamilyDefaults; o
 type Family = { id: string; name: string };
 type Allergen = { id: string; name: string };
 type ProductDefaults = Record<string, string | number | null | undefined>;
-type VariantDefault = { name: string; approximate_weight_grams: number | null; price_cents: number | null; vat_rate: number };
+type VariantDefault = { id?: string; name: string; approximate_weight_grams: number | null; price_cents: number | null; vat_rate: number };
 type ProductImage = { storage_path: string; alt_text: string | null };
 
 const TABS = ["Información", "Venta", "Características", "Variantes", "Disponibilidad"] as const;
@@ -201,6 +201,7 @@ export function ProductForm({
             {variantRows.map((row, i) => (
               <fieldset className="admin-fieldset product-variant-row" key={row.key}>
                 <legend>Variante {i + 1}</legend>
+                {row.id ? <input type="hidden" name={`variant_id_${i}`} value={row.id} /> : null}
                 <Input
                   id={`variant-name-${row.key}`} name={`variant_name_${i}`} label="Nombre" defaultValue={row.name ?? ""}
                   error={state.errors?.[`variant_name_${i}`]}

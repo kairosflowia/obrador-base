@@ -29,7 +29,27 @@ function validateProduct(f:FormData){const p=productPayload(f),errors:Record<str
 export async function saveProductAction(_s:CatalogActionState,f:FormData):Promise<CatalogActionState>{
  const {p,errors}=validateProduct(f); if(Object.keys(errors).length)return{ok:false,errors}; const db=await authorized(); const id=text(f,"id"); const requested=text(f,"status") as "draft"|"active"|"seasonal"|"unavailable"|"discontinued"; let productId=id;
  if(id){const r=await db.from("products").update({...p,status:"draft"}).eq("id",id);if(r.error)return{ok:false,message:r.error.message};}else{const r=await db.from("products").insert({...p,status:"draft"}).select("id").single();if(r.error)return{ok:false,message:"No se ha creado. Comprueba el slug."};productId=r.data.id;}
- const variants=Array.from({length:10},(_,i)=>({name:text(f,`variant_name_${i}`),price:euros(f,`price_${i}`),weight:integer(f,`weight_grams_${i}`),vat:Number(text(f,`vat_rate_${i}`)||"0"),display_order:i})).filter(v=>v.name);await db.from("product_variants").delete().eq("product_id",productId);if(variants.length){const vr=await db.from("product_variants").insert(variants.map(v=>({product_id:productId,name:v.name,price_cents:v.price,approximate_weight_grams:v.weight,vat_rate:v.vat,display_order:v.display_order,status:v.price===null?"draft" as const:"active" as const})));if(vr.error)return{ok:false,message:vr.error.code==="23505"?"Hay dos variantes con el mismo nombre. Usa un nombre distinto para cada una.":vr.error.message};}
+ // No se puede borrar todas las variantes y reinsertarlas: una variante con
+ // historial de estoque (product_stock_movements) es un ledger inmutable
+ // (on delete cascade + trigger que prohíbe el delete en cascada), así que
+ // un delete().eq("product_id",...) sin más falla en silencio para esa
+ // variante en concreto -- el código nunca comprobaba el error, y la
+ // siguiente inserción con el mismo nombre chocaba con la restricción unique
+ // (product_id,name), mostrando un "duplicate key" confuso sin que hubiera
+ // ningún nombre repetido de verdad. Ahora se actualiza cada variante
+ // existente por id, se insertan solo las nuevas, y solo se borran las que
+ // el usuario quitó del formulario -- tolerando que alguna no se pueda
+ // borrar por tener historial.
+ const variants=Array.from({length:10},(_,i)=>({id:text(f,`variant_id_${i}`)||null,name:text(f,`variant_name_${i}`),price:euros(f,`price_${i}`),weight:integer(f,`weight_grams_${i}`),vat:Number(text(f,`vat_rate_${i}`)||"0"),display_order:i})).filter(v=>v.name);
+ const { data: existing } = await db.from("product_variants").select("id").eq("product_id",productId);
+ const submittedIds=new Set(variants.map(v=>v.id).filter(Boolean));
+ const removedIds=(existing??[]).map((v:any)=>v.id).filter((id:string)=>!submittedIds.has(id));
+ if(removedIds.length){const del=await db.from("product_variants").delete().in("id",removedIds);if(del.error)return{ok:false,message:"No se ha podido quitar una variante con historial de estoque o pedidos: márcala como no disponible en vez de borrarla."};}
+ for(const v of variants){
+   const payload={product_id:productId,name:v.name,price_cents:v.price,approximate_weight_grams:v.weight,vat_rate:v.vat,display_order:v.display_order,status:v.price===null?"draft" as const:"active" as const};
+   const result=v.id?await db.from("product_variants").update(payload).eq("id",v.id):await db.from("product_variants").insert(payload);
+   if(result.error)return{ok:false,message:result.error.code==="23505"?"Hay dos variantes con el mismo nombre. Usa un nombre distinto para cada una.":result.error.message};
+ }
  await db.from("product_production_weekdays").delete().eq("product_id",productId); const days=f.getAll("weekday").map(Number).filter(d=>d>=1&&d<=7);if(days.length)await db.from("product_production_weekdays").insert(days.map(weekday=>({product_id:productId,weekday,is_active:true})));
  const allergenIds=f.getAll("allergen").map(String);await db.from("product_allergens").delete().eq("product_id",productId);if(allergenIds.length)await db.from("product_allergens").insert(allergenIds.map(allergen_id=>({product_id:productId,allergen_id,presence_type:"contains" as const})));
  const mayIds=f.getAll("may_contain").map(String);if(mayIds.length)await db.from("product_allergens").insert(mayIds.map(allergen_id=>({product_id:productId,allergen_id,presence_type:"may_contain" as const})));
