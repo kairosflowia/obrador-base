@@ -9,7 +9,7 @@ const csp = [
   "object-src 'none'",
   `script-src 'self' 'unsafe-inline'${production ? "" : " 'unsafe-eval'"} https://js.stripe.com https://*.js.stripe.com`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com",
+  "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://tile.openstreetmap.org",
   "font-src 'self' data:",
   // *.js.stripe.com (con comodín) es imprescindible, no solo el dominio
   // exacto: Stripe.js abre iframes internos desde subdominios variables por

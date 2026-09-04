@@ -575,21 +575,18 @@ p { max-width: 68ch; }
 .editorial-card h2, .editorial-card h3, .editorial-card p { margin: 0; }
 .editorial-card--ink { background: var(--negro); color: var(--crema); }
 .location-schedule { display: grid; gap: var(--space-4); margin-top: var(--space-2); }
-.location-map { position: relative; margin: 0; overflow: hidden; border-radius: 0.5rem; border: 1px solid var(--border); aspect-ratio: 16 / 9; background: var(--surface-sunken); }
-.editorial-card--ink .location-map { border-color: var(--border-on-image); background: color-mix(in srgb, var(--crema) 10%, transparent); }
-.location-map__art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.location-map__hill { fill: var(--accent-surface); }
-.location-map__hill--front { fill: color-mix(in srgb, var(--accent) 20%, transparent); }
-.location-map__road { stroke: var(--border-strong); stroke-width: 2; }
-.location-map__road-dash { stroke: var(--surface); stroke-width: 1; stroke-dasharray: 4 5; }
-.editorial-card--ink .location-map__road { stroke: var(--border-on-image); }
-.editorial-card--ink .location-map__road-dash { stroke: transparent; }
-.location-map__pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50% 50% 50% 0; transform-origin: bottom center; rotate: -45deg; background: var(--primary); color: var(--foreground-inverse); box-shadow: 0 2px 6px var(--overlay-medium); }
-.location-map__pin svg { rotate: 45deg; width: 1.1rem; height: 1.1rem; }
-.location-map__caption { position: absolute; inset-inline: 0; bottom: 0; padding: var(--space-2) var(--space-3); background: var(--surface-translucent); font-size: 0.75rem; color: var(--foreground); }
-.editorial-card--ink .location-map__caption { background: var(--overlay-strong); color: var(--crema); }
+.location-map { position: relative; margin: 0; overflow: hidden; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--surface-sunken); }
+.editorial-card--ink .location-map { border-color: var(--border-on-image); }
+.location-map__canvas { width: 100%; height: 12rem; z-index: 0; }
+.location-map__caption { padding: var(--space-2) var(--space-3); font-size: 0.75rem; border-top: 1px solid var(--border); }
+.location-map__caption a { font-weight: 700; }
+.editorial-card--ink .location-map__caption { border-color: var(--border-on-image); }
+.location-map__leaflet-pin { background: transparent; border: none; }
+.location-map__pin { display: block; width: 1.75rem; height: 1.75rem; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); transform-origin: center; background: var(--primary); box-shadow: 0 2px 6px var(--overlay-medium); }
+.location-map__pin::after { content: ""; position: absolute; inset: 0; margin: auto; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--foreground-inverse); }
 @media (min-width: 640px) {
-  .location-schedule { grid-template-columns: minmax(0, 1fr) minmax(11rem, 14rem); align-items: start; }
+  .location-schedule { grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem); align-items: start; }
+  .location-map__canvas { height: 100%; min-height: 12rem; }
 }
 .catalog-toolbar { display: grid; gap: var(--space-4); margin-top: var(--space-6); padding: var(--space-4); border: 1px solid var(--border); background: var(--surface); }
 .catalog-toolbar p, .catalog-heading, .catalog-note, .form-status { margin: 0; }

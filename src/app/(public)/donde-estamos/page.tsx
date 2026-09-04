@@ -97,7 +97,14 @@ export default async function DondeEstamosPage() {
                           <p>Todavía no hay franjas de recogida publicadas para este punto.</p>
                         )}
                       </div>
-                      {address ? <LocationMap address={`${address}${point.city ? `, ${point.city}` : ""}`} /> : null}
+                      {point.latitude != null && point.longitude != null ? (
+                        <LocationMap
+                          latitude={point.latitude}
+                          longitude={point.longitude}
+                          address={`${address}${point.city ? `, ${point.city}` : ""}`}
+                          directionsHref={link}
+                        />
+                      ) : null}
                     </div>
 
                     {point.public_instructions ? <p>{point.public_instructions}</p> : null}
