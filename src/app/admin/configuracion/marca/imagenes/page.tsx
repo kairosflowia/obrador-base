@@ -1,8 +1,9 @@
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { Button, Card, Input } from "@/components/ui";
+import { Button, Card } from "@/components/ui";
+import { BrandImageUploadForm } from "@/components/admin/brand-image-upload-form";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-import { uploadBrandImageAction } from "./actions";
+import { removeBrandImageAction, uploadBrandImageAction } from "./actions";
 import { SLOT_KEYS, type BrandImageSlot } from "./slots";
 
 const SLOTS: { slot: BrandImageSlot; label: string; help?: string }[] = [
@@ -42,13 +43,17 @@ export default async function MarcaImagenes() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={current} alt={label} style={{ maxWidth: "100%", maxHeight: 120, marginBottom: "0.75rem" }} />
               ) : (
-                <p className="field__help">Sin imagen personalizada.</p>
+                <p className="field__help">Sin imagen personalizada. Se muestra el marcador de posición del portal.</p>
               )}
-              <form action={uploadBrandImageAction} className="admin-form">
-                <input type="hidden" name="slot" value={slot} />
-                <Input id={`file_${slot}`} name="image" label="Nuevo archivo" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/svg+xml,image/x-icon" helpText={help} />
-                <Button type="submit">Subir</Button>
-              </form>
+              <BrandImageUploadForm action={uploadBrandImageAction} slot={slot} hasCurrent={Boolean(current)} help={help} />
+              {current ? (
+                <form action={removeBrandImageAction} className="admin-form">
+                  <input type="hidden" name="slot" value={slot} />
+                  <Button type="submit" variant="secondary">
+                    Quitar imagen
+                  </Button>
+                </form>
+              ) : null}
             </Card>
           );
         })}

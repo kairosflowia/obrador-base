@@ -46,3 +46,30 @@ export async function uploadBrandImageAction(formData: FormData) {
   revalidatePath("/", "layout");
   redirect("/admin/configuracion/marca/imagenes");
 }
+
+export async function removeBrandImageAction(formData: FormData) {
+  const identity = await getCurrentIdentity();
+  if (!identity?.roles.includes("owner")) throw new Error("forbidden");
+
+  const slot = String(formData.get("slot")) as BrandImageSlot;
+  const settingKey = SLOT_KEYS[slot];
+  if (!settingKey) throw new Error("invalid_slot");
+
+  const db = createAdminClient();
+  const { data: current } = await db.from("app_settings").select("value").eq("key", settingKey).maybeSingle();
+  const currentUrl = typeof current?.value === "string" ? current.value : null;
+
+  // Se borra la fila en vez de vaciar el valor: getBrandSettings() cae
+  // limpiamente al fallback/placeholder de siteConfig cuando la clave no
+  // existe, igual que en el reset de "Restaurar configuración demo".
+  await db.from("app_settings").delete().eq("key", settingKey);
+
+  // Si la imagen actual vive en el bucket brand-assets (no un placeholder
+  // local de /brand/), se elimina también el archivo del storage.
+  const match = currentUrl?.match(/\/storage\/v1\/object\/public\/brand-assets\/(.+)$/);
+  if (match) await db.storage.from("brand-assets").remove([decodeURIComponent(match[1])]);
+
+  revalidateTag("brand-settings", "max");
+  revalidatePath("/", "layout");
+  redirect("/admin/configuracion/marca/imagenes");
+}
