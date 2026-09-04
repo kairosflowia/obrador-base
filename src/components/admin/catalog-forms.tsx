@@ -92,7 +92,7 @@ export function ProductForm({
     if (keys.length) {
       const infoFields = ["name", "slug", "family_id", "short_description"];
       if (keys.some((k) => infoFields.includes(k))) setTab(0);
-      else if (keys.some((k) => k.startsWith("price_"))) setTab(3);
+      else if (keys.some((k) => k.startsWith("price_") || k.startsWith("variant_name_"))) setTab(3);
     }
   }
 
@@ -201,7 +201,10 @@ export function ProductForm({
             {variantRows.map((row, i) => (
               <fieldset className="admin-fieldset product-variant-row" key={row.key}>
                 <legend>Variante {i + 1}</legend>
-                <Input id={`variant-name-${row.key}`} name={`variant_name_${i}`} label="Nombre" defaultValue={row.name ?? ""} />
+                <Input
+                  id={`variant-name-${row.key}`} name={`variant_name_${i}`} label="Nombre" defaultValue={row.name ?? ""}
+                  error={state.errors?.[`variant_name_${i}`]}
+                />
                 <Input id={`weight-${row.key}`} name={`weight_grams_${i}`} label="Peso aproximado (g)" type="number" min="1" optional defaultValue={row.approximate_weight_grams ?? ""} />
                 <Input
                   id={`price-${row.key}`} name={`price_${i}`} label="Precio (€)" type="number" min="0" step="0.01" helpText="Ej: 4,50"
