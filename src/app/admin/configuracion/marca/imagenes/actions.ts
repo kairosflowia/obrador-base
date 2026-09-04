@@ -37,10 +37,14 @@ export async function uploadBrandImageAction(formData: FormData) {
   if (up.error) throw new Error(up.error.message);
 
   const { data: pub } = db.storage.from("brand-assets").getPublicUrl(path);
-  await db
+  // upsert, no update: si la imagen se había "quitado" antes (removeBrandImageAction
+  // borra la fila entera), un update().eq("key", ...) no encuentra ninguna fila y no
+  // hace nada — la subida parecía fallar en silencio aunque el archivo sí llegaba al
+  // storage. Con upsert, tanto crear la fila de nuevo como actualizarla funcionan.
+  const { error: upsertError } = await db
     .from("app_settings")
-    .update({ value: pub.publicUrl, is_public: true, updated_by: identity.user.id })
-    .eq("key", settingKey);
+    .upsert({ key: settingKey, value: pub.publicUrl, is_public: true, updated_by: identity.user.id }, { onConflict: "key" });
+  if (upsertError) throw new Error(upsertError.message);
 
   revalidateTag("brand-settings", "max");
   revalidatePath("/", "layout");

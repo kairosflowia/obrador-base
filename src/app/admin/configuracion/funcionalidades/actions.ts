@@ -57,8 +57,7 @@ export async function setFeatureFlagAction(feature: keyof FeatureFlags, enabled:
   for (const key of featureKeys) {
     await db
       .from("app_settings")
-      .update({ value: resolved[key], is_public: true, updated_by: identity.user.id })
-      .eq("key", FEATURE_SETTING_KEY[key]);
+      .upsert({ key: FEATURE_SETTING_KEY[key], value: resolved[key], is_public: true, updated_by: identity.user.id }, { onConflict: "key" });
   }
 
   revalidateTag("brand-settings", "max");

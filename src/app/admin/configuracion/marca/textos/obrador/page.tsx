@@ -32,7 +32,7 @@ async function save(form: FormData) {
   const db = createAdminClient() as any;
   for (const [key] of scalarFields) {
     const value = String(form.get(key) ?? "").trim();
-    await db.from("app_settings").update({ value, is_public: true, updated_by: identity.user.id }).eq("key", key);
+    await db.from("app_settings").upsert({ key, value, is_public: true, updated_by: identity.user.id }, { onConflict: "key" });
   }
   const items = DEFAULT_PROCESS.map((step, i) => ({
     number: step.number,
@@ -41,7 +41,7 @@ async function save(form: FormData) {
     description: String(form.get(`process_description_${i}`) ?? "").trim(),
   })).filter((item) => item.title);
   if (items.length) {
-    await db.from("app_settings").update({ value: items, is_public: true, updated_by: identity.user.id }).eq("key", PROCESS_KEY);
+    await db.from("app_settings").upsert({ key: PROCESS_KEY, value: items, is_public: true, updated_by: identity.user.id }, { onConflict: "key" });
   }
   revalidateTag("brand-settings", "max");
   revalidatePath("/", "layout");
