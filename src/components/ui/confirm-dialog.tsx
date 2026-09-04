@@ -6,10 +6,9 @@ import { Button } from "./button";
 import { Modal } from "./dialog";
 
 /**
- * Reemplazo con estética FUERZA para confirm() nativo del navegador (Fase 6
- * del Plano Mestre UX/UI: "sistema de... confirmación"). El padre controla
- * open/onClose/onConfirm igual que ya hace con su propio estado local; este
- * componente solo pone la interfaz.
+ * Reemplazo estilizado para confirm() nativo del navegador. El padre
+ * controla open/onClose/onConfirm igual que ya hace con su propio estado
+ * local; este componente solo pone la interfaz.
  */
 export function ConfirmDialog({
   open,

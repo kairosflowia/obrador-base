@@ -1,30 +1,39 @@
-# FUERZA
+# Obrador Base
 
-Fundação técnica do site do FUERZA, obrador artesanal de massa mãe nas Astúrias. A interface pública está escrita em espanhol de Espanha.
+Plantilla técnica reutilizable para el portal de un obrador artesanal (catálogo, reservas, Plan de Pan, puntos de recogida, panel de administración). Toda la identidad de marca de un cliente concreto (nombre, colores, tipografía, contacto, textos e imágenes) se configura desde el admin, no en el código. La interfaz pública está escrita en español de España.
 
 ## Requisitos
 
 - Node.js 22 LTS
-- npm 10 ou superior
+- npm 10 o superior
 
-## Instalação
+## Preparar una demo nueva
+
+```bash
+npm install
+npm run create-demo
+```
+
+`create-demo` pregunta el nombre del cliente, slug, ciudad, preset y colores, y escribe esos valores como configuración inicial en `.env.local`. No crea ni conecta ningún servicio externo (Supabase, Stripe, Resend, Vercel): eso sigue siendo un paso manual, descrito más abajo.
+
+## Instalación manual
 
 ```bash
 npm install
 cp .env.example .env.local
 ```
 
-Para executar autenticação, preenche as três variáveis Supabase. Nunca coloques secrets ou ficheiros `.env*` reais no Git. `SUPABASE_SERVICE_ROLE_KEY` é exclusivamente server-side e não é necessária para os fluxos normais do cliente.
+Rellena las variables de Supabase para poder autenticarte. Nunca subas secretos ni ficheros `.env*` reales al repositorio. `SUPABASE_SERVICE_ROLE_KEY` es exclusivamente de servidor.
 
-## Desenvolvimento
+## Desarrollo
 
 ```bash
 npm run dev
 ```
 
-A aplicação fica disponível em `http://localhost:3000` por omissão.
+La aplicación queda disponible en `http://localhost:3000` por defecto.
 
-## Qualidade e produção
+## Calidad y producción
 
 ```bash
 npm run lint
@@ -34,22 +43,34 @@ npm run build
 npm run start
 ```
 
-## Estrutura básica
+## Estructura básica
 
 ```text
-src/app/       App Router, layout, páginas e estilos globais
-src/lib/       Configuração e utilitários partilhados
-public/        Ativos estáticos e branding
-docs/          Documentação de produto, design e implementação
+src/app/       App Router: layout, páginas y estilos globales
+src/lib/       Configuración y utilidades compartidas
+src/config/    Valores de fábrica (fallback) de marca y feature flags
+public/        Activos estáticos y marcadores de posición de marca
+scripts/       Scripts de utilidad (create-demo, validación de backups)
+supabase/      Migraciones SQL y tests de base de datos
+docs/          Documentación de producto, diseño e implementación
 ```
 
-As pastas de componentes, estilos e tipos serão criadas quando tiverem conteúdo real, evitando estrutura vazia prematura.
+## Personalización de marca (sin tocar código)
 
-## Supabase e autenticação
+Con Supabase conectado y las migraciones aplicadas, toda la identidad del cliente se gestiona desde `/admin/configuracion`:
 
-O projeto utiliza apenas os clientes oficiais `@supabase/supabase-js` e `@supabase/ssr`. A sessão é mantida em cookies pelo cliente SSR e renovada através de `src/proxy.ts`. Identidade e autorização no servidor são confirmadas com Supabase Auth; `getSession()` não é usado como decisão de acesso.
+- **`/configuracion/inicio`** — asistente de puesta en marcha: repasa los pasos necesarios para preparar la demo de un cliente nuevo y enlaza a cada pantalla real.
+- **`/configuracion/marca`** — nombre, logo, colores, tipografía, contacto, localización, textos institucionales e imágenes.
+- **`/configuracion/funcionalidades`** — activa o desactiva módulos (catálogo, pedidos online, pagos, suscripciones, inventario, etc.), respetando las dependencias entre ellos.
+- **`/configuracion/legal`** — datos del titular para Aviso legal y Privacidad.
 
-Variáveis necessárias:
+En tiempo de ejecución, `getBrandSettings()` (`src/lib/brand/get-brand-settings.ts`) combina lo guardado en la tabla `app_settings` (claves `marca.*` y `features.*`) con los valores de fábrica de `src/config/`. Las variables `NEXT_PUBLIC_*` de `.env.example` solo actúan como semilla inicial — no como fuente de verdad — una vez el proyecto tiene un Supabase conectado.
+
+## Supabase y autenticación
+
+El proyecto utiliza únicamente los clientes oficiales `@supabase/supabase-js` y `@supabase/ssr`. La sesión se mantiene en cookies por el cliente SSR y se renueva a través de `src/proxy.ts`. La identidad y autorización en el servidor se confirman con Supabase Auth.
+
+Variables necesarias:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL=
@@ -57,11 +78,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ```
 
-No painel Supabase, adiciona os URLs exatos de `/auth/callback` para desenvolvimento, preview e produção à lista de Redirect URLs. Ativa confirmação de email e configura limites de Auth/CAPTCHA adequados antes de produção. O ambiente local já exige passwords com pelo menos oito caracteres e aplica os limites nativos do Supabase Auth.
+En el panel de Supabase, añade las URLs exactas de `/auth/callback` (desarrollo, preview y producción) a la lista de Redirect URLs. Activa la confirmación de email y configura los límites de Auth/CAPTCHA adecuados antes de producción.
 
-### Desenvolvimento local e migrações
+### Desarrollo local y migraciones
 
-É necessário Docker em execução. Depois:
+Requiere Docker en ejecución:
 
 ```bash
 npm run supabase:start
@@ -69,20 +90,22 @@ npm run db:reset
 npm run test:db
 ```
 
-`db:reset` aplica todas as migrações e depois `supabase/seed.sql`. O seed não cria utilizadores, credenciais ou dados comerciais. Os testes pgTAP em `supabase/tests/database/` criam identidades fictícias apenas dentro de uma transação revertida no final.
+`db:reset` aplica todas las migraciones y después `supabase/seed.sql`. El seed no crea usuarios, credenciales ni datos comerciales reales.
 
-### Funções e primeiro proprietário
+Para un proyecto remoto ya conectado (`npx supabase link`), aplica migraciones nuevas con `npx supabase db push`. Nunca uses `db reset` sobre un proyecto remoto; confirma primero el destino con `npx supabase projects list`.
 
-Cada conta recebe `customer`. As funções administrativas são `owner`, `admin`, `operator` e `pickup_manager`; as permissões da interface encontram-se centralizadas em `src/lib/auth/permissions.ts` e são reforçadas por RLS.
+### Roles y primer propietario
 
-Para criar o primeiro `owner`, cria e confirma primeiro uma conta normal. Depois, no SQL Editor do projeto, com privilégios administrativos, confirma que o email identifica exatamente uma conta e executa numa transação, substituindo o parâmetro apenas durante a operação:
+Cada cuenta nueva recibe el rol `customer`. Los roles administrativos son `owner`, `admin`, `operator` y `pickup_manager`; los permisos de la interfaz están centralizados en `src/lib/auth/permissions.ts` y reforzados por RLS.
+
+Para crear el primer `owner`, registra y confirma primero una cuenta normal. Después, en el SQL Editor del proyecto, con privilegios administrativos:
 
 ```sql
 begin;
 do $$
 declare target_user uuid;
 begin
-  select id into strict target_user from auth.users where email = 'EMAIL_CONFIRMADO_DO_PROPRIETARIO';
+  select id into strict target_user from auth.users where email = 'EMAIL_CONFIRMADO_DEL_PROPIETARIO';
   insert into public.user_roles (user_id, role, granted_by)
   values (target_user, 'owner', target_user)
   on conflict (user_id, role) do nothing;
@@ -92,31 +115,16 @@ end $$;
 commit;
 ```
 
-Não guardes o email real no repositório. Depois do primeiro proprietário existir, atribuições e remoções elevadas passam pelas funções SQL auditadas e só podem ser executadas por um `owner`.
+No guardes el email real en el repositorio. A partir de entonces, las asignaciones y retiradas de rol se hacen desde `/admin` por un `owner` ya existente.
 
-### Compra futura sem conta
+### Datos de demostración
 
-A autenticação é opcional para clientes. O futuro modelo de encomendas deverá aceitar email e telefone de convidado, oferecer uma ligação assinada de consulta e permitir associação posterior somente após verificação do email. Esta fase não cria tabelas de encomendas nem obriga a criar conta.
+`supabase/migrations/*_demo_mode.sql` y `*_demo_data.sql` siembran un catálogo, un punto de recogida y una suscripción de ejemplo, todos marcados `is_demo = true`, con datos ficticios (`example.invalid`, direcciones "Demo"). `/admin/configuracion/marca/restaurar` permite volver a la identidad genérica de la plantilla sin perder datos reales.
 
-### Catálogo e imagens de produto
+## Documentación
 
-A migração `20260803190000_product_catalog.sql` cria famílias, produtos, variantes, ingredientes, alergénios, imagens, dias habituais de produção e a associação preparada para pontos de recolha. Preços são guardados em cêntimos inteiros; o catálogo público só lê produtos publicados através de RLS.
-
-O bucket privado `product-images` aceita JPEG, PNG, WebP e AVIF até 8 MB. Owner e admin fazem upload pelo painel e a aplicação entrega apenas imagens associadas a produtos publicados. O seed de produção permanece sem produtos fictícios.
-
-Após ligar explicitamente o projeto remoto, aplica migrações com `npx supabase db push`. Nunca uses `db reset` num projeto remoto e confirma primeiro o destino com `npx supabase projects list`.
-
-### Limitações atuais
-
-- Não existe projeto Supabase remoto configurado neste repositório.
-- O rate limiting da aplicação não foi duplicado em memória; usam-se os limites nativos do Supabase Auth. CAPTCHA ou proteção adicional de edge deve ser configurada antes do lançamento.
-- Gestão visual de utilizadores e alterações de `app_settings` continuam sem CRUD.
-- A `SUPABASE_SERVICE_ROLE_KEY` fica preparada apenas para futuros processos administrativos estritamente server-side.
-
-## Documentação
-
-As decisões do projeto estão em [`docs/`](./docs/). O plano de execução encontra-se em [`docs/06-roadmap-de-implementacao.md`](./docs/06-roadmap-de-implementacao.md).
+Las decisiones de producto originales están en [`docs/`](./docs/).
 
 ## Vercel
 
-O projeto usa a configuração padrão do Next.js. Na Vercel, o Root Directory deve permanecer na raiz do repositório, onde se encontra o `package.json`; o comando de build é `npm run build`.
+El proyecto usa la configuración estándar de Next.js. El Root Directory debe permanecer en la raíz del repositorio (donde está `package.json`); el comando de build es `npm run build`. Cada demo/cliente requiere su propio proyecto Vercel con sus propias variables de entorno (Supabase, Stripe, Resend) — no se comparten entre clientes.

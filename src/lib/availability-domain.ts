@@ -30,10 +30,14 @@ export const AVAILABILITY_REASON_LABELS_ES: Record<string, string> = {
   invalid_checkout: "Añade al menos un artículo con cantidad válida",
   invalid_email: "Revisa el correo electrónico: no parece válido",
   variant_unavailable: "Esta variante no está publicada o no tiene precio",
-  reserved_for_subscribers: "Reservado por ahora para quienes tienen Fuerza Habitual. Pronto se abre para todo el mundo.",
 };
 
-export function availabilityReasonLabel(reason: string): string {
+const DEFAULT_SUBSCRIPTIONS_NAME = "el Plan de Pan";
+
+export function availabilityReasonLabel(reason: string, subscriptionsName: string = DEFAULT_SUBSCRIPTIONS_NAME): string {
+  if (reason === "reserved_for_subscribers") {
+    return `Reservado por ahora para quienes tienen ${subscriptionsName}. Pronto se abre para todo el mundo.`;
+  }
   return AVAILABILITY_REASON_LABELS_ES[reason] ?? "No disponible ahora mismo";
 }
 

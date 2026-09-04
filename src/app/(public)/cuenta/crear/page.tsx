@@ -6,19 +6,22 @@ import { AuthForm } from "@/components/account/auth-form";
 import { PageIntro } from "@/components/public/page-intro";
 import { Container, Section } from "@/components/ui";
 import { createPageMetadata } from "@/lib/seo";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return createPageMetadata({ title: "Crear una cuenta", description: "Crea tu cuenta FUERZA.", path: "/cuenta/crear" });
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({ title: "Crear una cuenta", description: `Crea tu cuenta ${siteConfig.brand.shortName}.`, path: "/cuenta/crear" });
 }
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const siteConfig = await getBrandSettings();
   return (
     <main id="main-content">
       <PageIntro eyebrow="Tu cuenta" title="Crear una cuenta" description="Guarda tus datos para futuras recogidas. No será obligatorio tener cuenta para comprar." />
       <Section><Container className="auth-layout">
         <div>
           <AuthForm action={signUpAction} fields={["full_name", "email", "password", "password_confirmation"]} submitLabel="Crear cuenta" />
-          <p className="form-note">Al crear la cuenta recibirás un correo de confirmación. No guardamos contraseñas en FUERZA.</p>
+          <p className="form-note">Al crear la cuenta recibirás un correo de confirmación. No guardamos contraseñas en {siteConfig.brand.shortName}.</p>
           <Link className="text-link" href="/cuenta/acceder">Ya tengo una cuenta</Link>
         </div>
       </Container></Section>

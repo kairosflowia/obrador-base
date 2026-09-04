@@ -41,7 +41,7 @@ export default async function PickupPointAdminDetail({ params }: { params: Promi
       </Card>
 
       <Card>
-        <h2>Ventanas de recogida FUERZA</h2>
+        <h2>Ventanas de recogida</h2>
         <CollectionWindowsForm pointId={id} windows={windows ?? []} />
       </Card>
 

@@ -4,8 +4,10 @@ import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Badge, EmptyState } from "@/components/ui";
 import { FREQUENCY_LABELS_ES, SUBSCRIPTION_STATUS_BADGE_VARIANT, subscriptionStatusLabel } from "@/lib/subscriptions-domain";
 import { createClient } from "@/lib/supabase/server";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export default async function AdminSubscriptions() {
+  const siteConfig = await getBrandSettings();
   const db: any = await createClient();
   const { data: list } = await db
     .from("subscriptions")
@@ -15,7 +17,7 @@ export default async function AdminSubscriptions() {
   return (
     <>
       <AdminPageHeader
-        title="Fuerza Habitual"
+        title={siteConfig.content.subscriptions.name}
         description="Suscripciones, ciclos y alertas operativas."
         actions={<Link href="/admin/suscripciones/planes">Panes en membresía</Link>}
       />

@@ -37,9 +37,8 @@ export async function GET(request: NextRequest) {
   summary.subscription_jobs = subscriptionError ? null : subscriptionJobs;
   if (subscriptionError) summary.subscription_error = subscriptionError.message;
 
-  // Genera el siguiente ciclo de cada suscripción Fuerza Habitual activa
-  // cuando el anterior ya se pagó. Sin esto ninguna suscripción produciría
-  // más que una entrega (Documento funcional §7).
+  // Genera el siguiente ciclo de cada suscripción activa cuando el anterior
+  // ya se pagó. Sin esto ninguna suscripción produciría más que una entrega.
   const { data: cycleJobs, error: cycleError } = await (db as never as { rpc(name:string):Promise<{data:unknown;error:{message:string}|null}> }).rpc("generate_subscription_cycles");
   summary.subscription_cycles = cycleError ? null : cycleJobs;
   if (cycleError) summary.subscription_cycles_error = cycleError.message;

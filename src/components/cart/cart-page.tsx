@@ -200,7 +200,7 @@ export function CartPageClient({
         return;
       }
       if (!response.ok || !data?.clientSecret) {
-        setError(data?.error ? availabilityReasonLabel(data.error) : "No hemos podido reservar la disponibilidad. Inténtalo de nuevo.");
+        setError(data?.error ? availabilityReasonLabel(data.error, siteConfig.content.subscriptions.name) : "No hemos podido reservar la disponibilidad. Inténtalo de nuevo.");
         return;
       }
       setPayment({ secret: data.clientSecret, code: data.publicCode, token: data.lookupToken, expiresAt: data.expiresAt ?? null });
@@ -333,7 +333,7 @@ export function CartPageClient({
               required
               label={<>Acepto las <a href="/condiciones-de-compra" target="_blank" rel="noreferrer">condiciones de compra</a> y la <a href="/privacidad" target="_blank" rel="noreferrer">política de privacidad</a>.</>}
             />
-            <Checkbox id="marketing" name="marketing" label="Quiero recibir novedades de FUERZA." />
+            <Checkbox id="marketing" name="marketing" label={`Quiero recibir novedades de ${siteConfig.brand.shortName}.`} />
 
             <Button type="submit" fullWidth loading={busy} loadingLabel="Reservando…" disabled={!point || !date || hasSoldOutItem}>{siteConfig.demoMode ? "Simular pedido" : "Pagar"}</Button>
             {hasSoldOutItem ? <Alert variant="warning" title="Revisa tu cesta">Hay un artículo agotado para este punto y fecha. Elimínalo o cambia la fecha para continuar.</Alert> : null}

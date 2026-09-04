@@ -1,4 +1,4 @@
-"use server";import {revalidatePath} from "next/cache";import {canAccessAdminSection} from "@/lib/auth/permissions";import {getCurrentIdentity} from "@/lib/auth/session";import {createAdminClient} from "@/lib/supabase/admin";import {createClient} from "@/lib/supabase/server";import {availabilityReasonLabel} from "@/lib/availability-domain";import {assertNotDemoDestructive} from "@/lib/demo";
+"use server";import {revalidatePath} from "next/cache";import {canAccessAdminSection} from "@/lib/auth/permissions";import {getCurrentIdentity} from "@/lib/auth/session";import {createAdminClient} from "@/lib/supabase/admin";import {createClient} from "@/lib/supabase/server";import {availabilityReasonLabel} from "@/lib/availability-domain";import {assertNotDemoDestructive} from "@/lib/demo";import {getBrandSettings} from "@/lib/brand/get-brand-settings";
 
 // cancel_order y mark_order_paid_manually son funciones security definer que
 // comprueban el rol del que llama a través de auth.uid() -- el cliente de
@@ -60,7 +60,8 @@ export async function createStaffOrderAction(_state: StaffOrderState, form: Form
   });
   const result = data?.[0];
   if (error || !result?.ok) {
-    return { ok: false, message: availabilityReasonLabel(result?.reason ?? "checkout_invalid") };
+    const siteConfig = await getBrandSettings();
+    return { ok: false, message: availabilityReasonLabel(result?.reason ?? "checkout_invalid", siteConfig.content.subscriptions.name) };
   }
 
   revalidatePath("/admin/pedidos");

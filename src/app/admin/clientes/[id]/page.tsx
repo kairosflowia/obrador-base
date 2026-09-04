@@ -12,6 +12,7 @@ import { ORDER_STATUS_BADGE_VARIANT, PAYMENT_STATUS_BADGE_VARIANT, orderStatusLa
 import { FREQUENCY_LABELS_ES, SUBSCRIPTION_STATUS_BADGE_VARIANT, subscriptionStatusLabel } from "@/lib/subscriptions-domain";
 import { isoToday } from "@/lib/production-date";
 import { createClient } from "@/lib/supabase/server";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
   const { id } = await params;
   const identity = await getCurrentIdentity();
   if (!identity || !canAccessAdminSection(identity.roles, "clientes")) redirect("/cuenta/acceso-denegado");
+  const siteConfig = await getBrandSettings();
 
   const db: any = await createClient();
 
@@ -84,7 +86,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         description={`${customer.email}${customer.phone ? ` · ${customer.phone}` : ""} · Cliente desde ${new Date(customer.created_at).toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })}`}
         actions={
           <div className="admin-action-group">
-            {isHabitual ? <Badge variant="primary">Fuerza Habitual</Badge> : null}
+            {isHabitual ? <Badge variant="primary">{siteConfig.content.subscriptions.name}</Badge> : null}
             <Link className="button button--primary" href={`/admin/pedidos/nuevo?customer=${id}`}>Nuevo pedido para este cliente</Link>
           </div>
         }

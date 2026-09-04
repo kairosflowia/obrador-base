@@ -48,25 +48,25 @@ export async function resolveTitularBlock(heading: string, identity: LegalOwnerI
   };
 }
 
-function buildLegalPages(contactEmail: string) {
+function buildLegalPages(contactEmail: string, brandName: string, subscriptionsName: string) {
   const titularPending = titularPendingFor(contactEmail);
   return {
   "aviso-legal": {
     title: "Aviso legal",
-    description: "Condiciones de uso del sitio web de FUERZA, propiedad intelectual y responsabilidad.",
+    description: `Condiciones de uso del sitio web de ${brandName}, propiedad intelectual y responsabilidad.`,
     content: content([
       titularPending,
       {
         heading: "Condiciones de uso",
         paragraphs: [
-          "Este sitio permite consultar el catálogo de pan de FUERZA, reservar pedidos para recoger en el obrador o en un punto de recogida, y gestionar tu cuenta y tus suscripciones de Fuerza Habitual.",
+          `Este sitio permite consultar el catálogo de pan de ${brandName}, reservar pedidos para recoger en el obrador o en un punto de recogida, y gestionar tu cuenta y tus suscripciones de ${subscriptionsName}.`,
           "Al usar el sitio te comprometes a facilitar datos veraces al reservar o crear una cuenta, y a no utilizar el servicio de forma que perjudique su funcionamiento o el de otros usuarios.",
         ],
       },
       {
         heading: "Propiedad intelectual",
         paragraphs: [
-          "Los textos, fotografías, logotipo y diseño de este sitio son propiedad de FUERZA o se utilizan con la autorización correspondiente. No está permitida su reproducción, distribución o uso comercial sin permiso previo por escrito.",
+          `Los textos, fotografías, logotipo y diseño de este sitio son propiedad de ${brandName} o se utilizan con la autorización correspondiente. No está permitida su reproducción, distribución o uso comercial sin permiso previo por escrito.`,
         ],
       },
       {
@@ -95,7 +95,7 @@ function buildLegalPages(contactEmail: string) {
       {
         heading: "Finalidades y base jurídica",
         paragraphs: [
-          "Gestionar tu cuenta, tus pedidos y tus suscripciones de Fuerza Habitual: es necesario para ejecutar el contrato de compraventa o de suscripción que aceptas al reservar.",
+          `Gestionar tu cuenta, tus pedidos y tus suscripciones de ${subscriptionsName}: es necesario para ejecutar el contrato de compraventa o de suscripción que aceptas al reservar.`,
           "Enviarte confirmaciones, recordatorios y avisos operativos sobre tus propios pedidos o suscripciones (por ejemplo, que tu pan ya está listo para recoger): también forma parte de la ejecución de ese contrato, no de comunicaciones comerciales.",
           "Responder a tus consultas a través del formulario de contacto: en base al consentimiento que das al enviar el formulario.",
           "No enviamos comunicaciones de marketing por correo salvo que te suscribas expresamente a nuestra newsletter, y siempre podrás darte de baja desde el propio correo.",
@@ -113,7 +113,7 @@ function buildLegalPages(contactEmail: string) {
   },
   cookies: {
     title: "Cookies",
-    description: "Qué cookies utiliza FUERZA y para qué sirve cada una.",
+    description: `Qué cookies utiliza ${brandName} y para qué sirve cada una.`,
     content: content([
       {
         heading: "Qué son las cookies",
@@ -124,8 +124,8 @@ function buildLegalPages(contactEmail: string) {
       {
         heading: "Cookies utilizadas",
         paragraphs: [
-          "Todas las cookies que utiliza FUERZA hoy son necesarias para el funcionamiento del sitio y no requieren consentimiento previo: mantener tu sesión iniciada, recordar el contenido de tu cesta y el punto de recogida que has elegido, aplicar medidas de seguridad (como el límite de intentos de acceso) y recordar tu elección sobre esta política de cookies.",
-          "FUERZA no utiliza actualmente cookies de analítica ni de publicidad de terceros. Si en el futuro incorporamos alguna, actualizaremos esta página y volveremos a pedirte tu consentimiento antes de activarla.",
+          `Todas las cookies que utiliza ${brandName} hoy son necesarias para el funcionamiento del sitio y no requieren consentimiento previo: mantener tu sesión iniciada, recordar el contenido de tu cesta y el punto de recogida que has elegido, aplicar medidas de seguridad (como el límite de intentos de acceso) y recordar tu elección sobre esta política de cookies.`,
+          `${brandName} no utiliza actualmente cookies de analítica ni de publicidad de terceros. Si en el futuro incorporamos alguna, actualizaremos esta página y volveremos a pedirte tu consentimiento antes de activarla.`,
         ],
       },
       {
@@ -144,12 +144,12 @@ function buildLegalPages(contactEmail: string) {
   },
   "condiciones-de-compra": {
     title: "Condiciones de compra",
-    description: "Cómo funciona una reserva en FUERZA, desde el pedido hasta la recogida.",
+    description: `Cómo funciona una reserva en ${brandName}, desde el pedido hasta la recogida.`,
     content: content([
       {
         heading: "Proceso de compra",
         paragraphs: [
-          "El pan de FUERZA se hace en cantidad limitada cada día, así que se compra por reserva: eliges los productos, la fecha y el punto de recogida disponibles, y confirmas el pedido.",
+          `El pan de ${brandName} se hace en cantidad limitada cada día, así que se compra por reserva: eliges los productos, la fecha y el punto de recogida disponibles, y confirmas el pedido.`,
           "Cada reserva requiere un mínimo de antelación (48 horas) respecto a la fecha de recogida elegida, porque la producción empieza ese mismo plazo antes. El sistema solo te dejará elegir fechas que todavía admiten reserva.",
         ],
       },
@@ -205,12 +205,12 @@ function buildLegalPages(contactEmail: string) {
   },
   "politica-de-suscripcion": {
     title: "Política de suscripción",
-    description: "Cómo funciona Fuerza Habitual: cobro recurrente, pausas, cambios y cancelación.",
+    description: `Cómo funciona ${subscriptionsName}: cobro recurrente, pausas, cambios y cancelación.`,
     content: content([
       {
         heading: "Cobro recurrente",
         paragraphs: [
-          "Fuerza Habitual es una suscripción con la frecuencia que elijas (semanal, quincenal, cada 3 semanas o mensual). Se te cobra automáticamente al inicio de cada ciclo por los productos y la cantidad que hayas configurado en tu cesta habitual.",
+          `${subscriptionsName} es una suscripción con la frecuencia que elijas (semanal, quincenal, cada 3 semanas o mensual). Se te cobra automáticamente al inicio de cada ciclo por los productos y la cantidad que hayas configurado en tu cesta habitual.`,
           "Si tu cesta suma 4 unidades o más, se aplica automáticamente un 5 % de descuento sobre el importe del ciclo.",
         ],
       },
@@ -230,7 +230,7 @@ function buildLegalPages(contactEmail: string) {
       {
         heading: "Cancelación",
         paragraphs: [
-          "Puedes cancelar Fuerza Habitual en cualquier momento desde tu cuenta. Se aplica la misma regla de las 48 horas: si el ciclo pendiente está a 48 horas o más, se cancela de inmediato sin cargo; si está a menos, ese último ciclo se completa con normalidad y la suscripción no se renueva después.",
+          `Puedes cancelar ${subscriptionsName} en cualquier momento desde tu cuenta. Se aplica la misma regla de las 48 horas: si el ciclo pendiente está a 48 horas o más, se cancela de inmediato sin cargo; si está a menos, ese último ciclo se completa con normalidad y la suscripción no se renueva después.`,
         ],
       },
     ]),
@@ -280,5 +280,5 @@ export function isLegalSlug(value: string): value is LegalSlug {
 export async function getLegalPages(): Promise<LegalPages> {
   const siteConfig = await getBrandSettings();
   const contactEmail = siteConfig.business.email || "la página de Contacto";
-  return buildLegalPages(contactEmail);
+  return buildLegalPages(contactEmail, siteConfig.brand.name, siteConfig.content.subscriptions.name);
 }

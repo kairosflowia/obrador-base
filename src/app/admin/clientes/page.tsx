@@ -9,6 +9,7 @@ import { canAccessAdminSection } from "@/lib/auth/permissions";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { getAdminSection } from "@/lib/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ export default async function CustomersAdminPage({ searchParams }: { searchParam
   const identity = await getCurrentIdentity();
   if (!identity || !canAccessAdminSection(identity.roles, "clientes")) redirect("/cuenta/acceso-denegado");
   const section = getAdminSection("clientes")!;
+  const siteConfig = await getBrandSettings();
 
   const db: any = await createClient();
   const { data: customers } = await db.rpc("admin_customer_directory", { p_query: q.trim() || null });
@@ -41,7 +43,7 @@ export default async function CustomersAdminPage({ searchParams }: { searchParam
               <div className="inventory-row__main">
                 <p className="inventory-row__product">
                   <Link href={`/admin/clientes/${c.customer_id}`}>{c.full_name || "Sin nombre"}</Link>
-                  {habitualIds.has(c.customer_id) ? <Badge variant="primary">Fuerza Habitual</Badge> : null}
+                  {habitualIds.has(c.customer_id) ? <Badge variant="primary">{siteConfig.content.subscriptions.name}</Badge> : null}
                 </p>
                 <p className="inventory-row__variant">
                   {c.email}{c.phone ? ` · ${c.phone}` : ""}

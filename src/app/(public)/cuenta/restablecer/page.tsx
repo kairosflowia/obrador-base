@@ -5,9 +5,11 @@ import { AuthForm } from "@/components/account/auth-form";
 import { PageIntro } from "@/components/public/page-intro";
 import { Container, Section } from "@/components/ui";
 import { createPageMetadata } from "@/lib/seo";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return createPageMetadata({ title: "Nueva contraseña", description: "Define una nueva contraseña para tu cuenta FUERZA.", path: "/cuenta/restablecer" });
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({ title: "Nueva contraseña", description: `Define una nueva contraseña para tu cuenta ${siteConfig.brand.shortName}.`, path: "/cuenta/restablecer" });
 }
 
 export default function ResetPasswordPage() {

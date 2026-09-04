@@ -4,14 +4,21 @@ import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
 import { stripeRecurringInterval, type SubscriptionFrequency } from "@/lib/subscriptions-domain";
 
-const HABITUAL_COUPON_ID = "fuerza-habitual-5pct";
+// Id genérico, distinto del cupón "fuerza-habitual-5pct" que pueda existir
+// ya en la cuenta de Stripe del cliente anterior (ese no se toca ni se
+// borra: las suscripciones activas que ya lo referencian siguen aplicando
+// su descuento con normalidad a través de Stripe, sin depender de este
+// código). Este id nuevo se crea automáticamente la primera vez que se
+// necesita (stripe.coupons.create más abajo) en la cuenta de Stripe de cada
+// cliente que use esta plantilla.
+const HABITUAL_COUPON_ID = "suscripcion-habitual-5pct";
 
 async function ensureDiscountCoupon() {
   const stripe = getStripe();
   try {
     return await stripe.coupons.retrieve(HABITUAL_COUPON_ID);
   } catch {
-    return stripe.coupons.create({ id: HABITUAL_COUPON_ID, percent_off: 5, duration: "forever", name: "Fuerza Habitual (4+ unidades)" });
+    return stripe.coupons.create({ id: HABITUAL_COUPON_ID, percent_off: 5, duration: "forever", name: "Suscripción habitual (4+ unidades)" });
   }
 }
 
@@ -41,7 +48,7 @@ export async function POST(req: Request) {
 
     const stripe = getStripe();
     const { data: local } = await db.from("subscriptions").select("stripe_customer_id").eq("customer_id", user.id).not("stripe_customer_id", "is", null).limit(1).maybeSingle();
-    const customer = local?.stripe_customer_id ?? (await stripe.customers.create({ email: user.email, metadata: { fuerza_customer_id: user.id } })).id;
+    const customer = local?.stripe_customer_id ?? (await stripe.customers.create({ email: user.email, metadata: { obrador_customer_id: user.id } })).id;
 
     const recurring = stripeRecurringInterval(body.frequency as SubscriptionFrequency);
     const discounts = candidate.discount_percent > 0 ? [{ coupon: (await ensureDiscountCoupon()).id }] : undefined;
@@ -61,7 +68,7 @@ export async function POST(req: Request) {
       payment_behavior: "default_incomplete",
       payment_settings: { save_default_payment_method: "on_subscription" },
       expand: ["latest_invoice.confirmation_secret"],
-      metadata: { fuerza_subscription_id: candidate.subscription_id },
+      metadata: { obrador_subscription_id: candidate.subscription_id },
     });
 
     await db.from("subscriptions").update({ stripe_customer_id: customer, stripe_subscription_id: subscription.id, status: "incomplete" }).eq("id", candidate.subscription_id);

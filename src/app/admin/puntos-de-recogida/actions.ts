@@ -135,7 +135,7 @@ export async function saveOpeningHoursAction(f: FormData) {
 }
 
 // ---------------------------------------------------------------------------
-// Ventanas de recogida FUERZA. Permite varias por día.
+// Ventanas de recogida. Permite varias por día.
 // ---------------------------------------------------------------------------
 
 const MAX_WINDOW_ROWS = 14;

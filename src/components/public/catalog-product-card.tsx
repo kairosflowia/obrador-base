@@ -57,7 +57,7 @@ export function CatalogProductCard({
       <div className="catalog-product-card__body">
         {familyName ? <p className="catalog-product-card__eyebrow">{familyName}</p> : null}
         {isSeasonal ? <Badge variant="information">De temporada</Badge> : null}
-        {availability?.status === "sold_out" ? <Badge variant="neutral">{availabilityReasonLabel(availability.reason)}</Badge> : null}
+        {availability?.status === "sold_out" ? <Badge variant="neutral">{availabilityReasonLabel(availability.reason, siteConfig.content.subscriptions.name)}</Badge> : null}
         {availability?.status === "low_stock" ? (
           <Badge variant="warning">{availability.quantityAvailable !== null ? `Últimas ${availability.quantityAvailable} unidades` : "Últimas unidades"}</Badge>
         ) : null}

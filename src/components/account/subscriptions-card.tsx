@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Badge, Button, EmptyState } from "@/components/ui";
 import { formatPrice } from "@/lib/catalog-domain";
 import { FREQUENCY_LABELS_ES, SUBSCRIPTION_STATUS_BADGE_VARIANT, subscriptionStatusLabel, type SubscriptionFrequency } from "@/lib/subscriptions-domain";
+import { useBrand } from "@/components/brand/brand-provider";
 
 type Subscription = {
   id: string;
@@ -19,6 +20,7 @@ type Subscription = {
 const CANCELLABLE_STATUSES = new Set(["active", "trialing", "paused", "past_due"]);
 
 export function AccountSubscriptionsCard({ subscriptions }: { subscriptions: Subscription[] }) {
+  const siteConfig = useBrand();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
@@ -46,7 +48,7 @@ export function AccountSubscriptionsCard({ subscriptions }: { subscriptions: Sub
   if (!subscriptions.length) {
     return (
       <EmptyState
-        title="Todavía no tienes Fuerza Habitual"
+        title={`Todavía no tienes ${siteConfig.content.subscriptions.name}`}
         description="Elige tu pan y tu frecuencia para no tener que pedir cada vez."
         action={
           <Link className="button button--primary" href="/plan-de-pan/membresias">

@@ -1,6 +1,6 @@
-# Operación y recuperación de FUERZA
+# Operación y recuperación
 
-Los backups remotos se gestionan desde el proyecto Supabase `fuerza` (`bmzedimxzmkpgqnevnmn`). La disponibilidad de point-in-time recovery depende del plan contratado y debe comprobarse antes del lanzamiento. Nunca se restaura directamente sobre producción para hacer una prueba.
+Los backups remotos se gestionan desde el proyecto Supabase de cada cliente (ver la referencia del proyecto en el panel de Supabase o en `supabase/.temp/project-ref` tras enlazarlo localmente). La disponibilidad de point-in-time recovery depende del plan contratado y debe comprobarse antes del lanzamiento. Nunca se restaura directamente sobre producción para hacer una prueba.
 
 ## Copia y restauración
 

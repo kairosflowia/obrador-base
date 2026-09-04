@@ -386,7 +386,7 @@ p { max-width: 68ch; }
 .editorial-product__price { padding-top: var(--space-3); border-top: 1px solid var(--border); font-weight: 700; }
 .editorial-product:hover { border-color: var(--foreground); }
 
-/* Homepage: "Hoy en FUERZA" — catálogo editorial, cards normalizados. */
+/* Homepage: catálogo editorial, cards normalizados. */
 .hoy-grid { gap: 0.875rem; }
 .hoy-grid .editorial-product { display: flex; flex-direction: column; overflow: hidden; border-color: var(--border); border-radius: var(--radius-3); background: var(--surface); transition: border-color 160ms ease; }
 .hoy-grid .editorial-product__image img { aspect-ratio: 4 / 3; }
@@ -439,7 +439,7 @@ p { max-width: 68ch; }
   .craft-feature { display: contents; }
 }
 
-/* Homepage: banner de Fuerza Habitual */
+/* Homepage: banner de suscripción */
 .habitual-section { background: var(--secondary); }
 .habitual-banner { display: grid; gap: var(--space-5); }
 .habitual-banner__media { overflow: hidden; border-radius: var(--radius-3); background: var(--surface); }
@@ -510,7 +510,7 @@ p { max-width: 68ch; }
   .obrador-cta { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
 }
 
-/* Fuerza Habitual: landing (/plan-de-pan) */
+/* Plan de suscripción: landing (/plan-de-pan) */
 .plan-hero { display: grid; gap: var(--space-6); align-items: center; }
 .plan-hero .institutional-hero { max-width: none; margin: 0; padding: 0; border-bottom: none; }
 .plan-hero__cta { display: inline-flex; margin-top: var(--space-5); }
@@ -850,7 +850,7 @@ p { max-width: 68ch; }
 .product-order-form__stock { margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-2); font-weight: 650; font-size: 0.875rem; width: fit-content; }
 .product-order-form__stock--low { background: var(--warning-surface); color: var(--warning); }
 .product-order-form__stock--out { background: var(--error-surface); color: var(--error); }
-/* Fuerza Habitual: constructor de cesta de membresía (/plan-de-pan/membresias) */
+/* Plan de suscripción: constructor de cesta de membresía (/plan-de-pan/membresias) */
 .membership-builder { display: grid; gap: var(--space-6); }
 .membership-builder__main { display: grid; gap: var(--space-7); min-width: 0; }
 .membership-step__label { margin: 0 0 var(--space-1); color: var(--muted-foreground); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }

@@ -21,5 +21,5 @@ export async function GET(request: Request) {
   else if(type==="produccion") rows=Object.entries(data.production??{});
   else if(type==="encomendas") rows=Object.entries(data.orders_by_status??{});
   else rows=Object.entries(data.financial??{});
-  return new NextResponse(rowsToCsv(headers,rows),{ headers:{ "content-type":"text/csv; charset=utf-8", "content-disposition":`attachment; filename="fuerza-${type}-${period.start}-${period.end}.csv"`, "cache-control":"private, no-store" } });
+  return new NextResponse(rowsToCsv(headers,rows),{ headers:{ "content-type":"text/csv; charset=utf-8", "content-disposition":`attachment; filename="obrador-${type}-${period.start}-${period.end}.csv"`, "cache-control":"private, no-store" } });
 }

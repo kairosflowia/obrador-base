@@ -17,8 +17,12 @@ export function InstallPrompt() {
   const eligible = useRef(false);
 
   useEffect(() => {
-    const visited = Number(localStorage.getItem("fuerza-visits") ?? "0") + 1;
-    localStorage.setItem("fuerza-visits", String(visited));
+    // Prefijo genérico "obrador-"; se lee el contador antiguo "fuerza-visits"
+    // como base si existe, para no reiniciar la elegibilidad de visitantes
+    // recurrentes reales tras esta migración de marca.
+    const previous = localStorage.getItem("obrador-visits") ?? localStorage.getItem("fuerza-visits") ?? "0";
+    const visited = Number(previous) + 1;
+    localStorage.setItem("obrador-visits", String(visited));
     eligible.current = visited > 1;
 
     const handlePrompt = (event: Event) => {

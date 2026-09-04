@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import { CartPageClient } from "@/components/cart/cart-page";
@@ -7,9 +8,13 @@ import { earliestBookableDate } from "@/lib/order-cutoff";
 import { getCutoffConfig } from "@/lib/order-cutoff-server";
 import { getPublicPickupPoints } from "@/lib/pickup-points";
 import { PICKUP_DATE_COOKIE, PICKUP_POINT_COOKIE } from "@/lib/pickup-selection";
+import { createPageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Cesta y pago | FUERZA" };
+
+export async function generateMetadata(): Promise<Metadata> {
+  return createPageMetadata({ title: "Cesta y pago", description: "Revisa tu cesta, elige punto y fecha de recogida, y completa el pago.", path: "/carrito" });
+}
 
 export default async function CartPage() {
   const [cutoffConfig, { points: allPoints }, cookieStore, identity] = await Promise.all([

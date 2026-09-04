@@ -1,5 +1,6 @@
 "use server";
 import { availabilityReasonLabel, getNextAvailableDate, getVariantAvailability } from "@/lib/availability";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export type AvailabilityCheckState = {
   checked: boolean;
@@ -31,11 +32,14 @@ export async function checkAvailabilityAction(_state: AvailabilityCheckState, fo
   }
 
   if (availability.status === "sold_out") {
-    const nextDate = await getNextAvailableDate(variantId, pointId, date);
+    const [nextDate, siteConfig] = await Promise.all([
+      getNextAvailableDate(variantId, pointId, date),
+      getBrandSettings(),
+    ]);
     return {
       checked: true,
       status: "sold_out",
-      message: availabilityReasonLabel(availability.reason),
+      message: availabilityReasonLabel(availability.reason, siteConfig.content.subscriptions.name),
       nextAvailableDate: nextDate,
     };
   }

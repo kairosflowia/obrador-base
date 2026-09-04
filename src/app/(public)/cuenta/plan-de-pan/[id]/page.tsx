@@ -7,11 +7,13 @@ import { formatDateEs } from "@/lib/order-cutoff";
 import { FREQUENCY_LABELS_ES, SUBSCRIPTION_STATUS_BADGE_VARIANT, subscriptionStatusLabel, type SubscriptionFrequency } from "@/lib/subscriptions-domain";
 import { getCurrentIdentity } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export default async function CustomerSubscription({ params }: { params: Promise<{ id: string }> }) {
   const identity = await getCurrentIdentity();
   if (!identity) redirect("/cuenta/acceder");
   const { id } = await params;
+  const siteConfig = await getBrandSettings();
   const db: any = await createClient();
   const { data: s } = await db
     .from("subscriptions")
@@ -33,7 +35,7 @@ export default async function CustomerSubscription({ params }: { params: Promise
       <Section>
         <Container>
           <div className="admin-action-group">
-            <h1>Fuerza Habitual</h1>
+            <h1>{siteConfig.content.subscriptions.name}</h1>
             <Badge variant={SUBSCRIPTION_STATUS_BADGE_VARIANT[s.status] ?? "neutral"}>{subscriptionStatusLabel(s.status)}</Badge>
           </div>
           <p>

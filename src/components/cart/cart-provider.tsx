@@ -35,15 +35,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    // Prefijo genérico "obrador-cart"; si no existe todavía pero sí la
+    // clave antigua "fuerza-cart" (cesta real ya guardada antes de esta
+    // migración de marca), se recupera de ahí en vez de perderla.
     try {
-      setItems(JSON.parse(localStorage.getItem("fuerza-cart") ?? "[]"));
+      const raw = localStorage.getItem("obrador-cart") ?? localStorage.getItem("fuerza-cart") ?? "[]";
+      setItems(JSON.parse(raw));
     } catch {
       // localStorage puede estar vacío o corrupto; se ignora y empieza con cesta vacía.
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("fuerza-cart", JSON.stringify(items));
+    localStorage.setItem("obrador-cart", JSON.stringify(items));
   }, [items]);
 
   const closeMiniCart = useCallback(() => {

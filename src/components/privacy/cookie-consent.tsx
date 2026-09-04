@@ -4,15 +4,19 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 const VERSION = "2026-08";
 type Consent = { necessary: true; version: string };
+// Prefijo genérico "obrador-"; se sigue leyendo (nunca escribiendo) el
+// prefijo antiguo "fuerza-" para no descartar el consentimiento ya dado por
+// clientes reales antes de esta migración de marca.
 function save(value: Consent) {
-  localStorage.setItem("fuerza-cookie-consent", JSON.stringify(value));
-  document.cookie = `fuerza_cookie_consent=${encodeURIComponent(JSON.stringify(value))}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+  localStorage.setItem("obrador-cookie-consent", JSON.stringify(value));
+  document.cookie = `obrador_cookie_consent=${encodeURIComponent(JSON.stringify(value))}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
 }
 export function CookieConsent() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem("fuerza-cookie-consent") ?? "null");
+      const raw = localStorage.getItem("obrador-cookie-consent") ?? localStorage.getItem("fuerza-cookie-consent") ?? "null";
+      const stored = JSON.parse(raw);
       if (!stored || stored.version !== VERSION) setOpen(true);
     } catch {
       setOpen(true);

@@ -54,7 +54,7 @@ function DesignSystemDemoContent() {
     <main id="main-content">
       <Section>
         <Container size="wide">
-          <PageHeader eyebrow="Uso interno · desarrollo" title="Sistema de diseño FUERZA" description="Primitivas visuales y accesibles para construir el portal y la operativa del obrador." />
+          <PageHeader eyebrow="Uso interno · desarrollo" title={`Sistema de diseño ${siteConfig.brand.shortName}`} description="Primitivas visuales y accesibles para construir el portal y la operativa del obrador." />
 
           <div className="showcase-section">
             <h2>Paleta</h2>

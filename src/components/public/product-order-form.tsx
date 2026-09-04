@@ -7,10 +7,12 @@ import { Textarea } from "@/components/ui/fields";
 import { availabilityReasonLabel, type VariantAvailability } from "@/lib/availability-domain";
 import { formatPrice } from "@/lib/catalog-domain";
 import { formatDateEs } from "@/lib/order-cutoff";
+import { useBrand } from "@/components/brand/brand-provider";
 
 type Variant = { id: string; name: string; priceCents: number; availability: VariantAvailability | null; maxQuantity: number | null; nextAvailableDate: string | null };
 
 export function ProductOrderForm({ productName, variants, image }: { productName: string; variants: Variant[]; image?: string }) {
+  const siteConfig = useBrand();
   const cart = useCart();
   const router = useRouter();
   const [variantId, setVariantId] = useState(variants[0]?.id ?? "");
@@ -48,7 +50,7 @@ export function ProductOrderForm({ productName, variants, image }: { productName
 
       {availability?.status === "sold_out" ? (
         <div className="product-order-form__stock product-order-form__stock--out">
-          <p>{availabilityReasonLabel(availability.reason)}</p>
+          <p>{availabilityReasonLabel(availability.reason, siteConfig.content.subscriptions.name)}</p>
           {variant.nextAvailableDate ? <p>Próxima disponibilidad: {formatDateEs(variant.nextAvailableDate)}.</p> : null}
         </div>
       ) : availability?.status === "low_stock" ? (

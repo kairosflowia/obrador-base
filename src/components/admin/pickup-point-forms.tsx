@@ -100,7 +100,7 @@ export function OpeningHoursForm({ pointId, hours }: { pointId: string; hours: H
   return (
     <form action={saveOpeningHoursAction} className="admin-form">
       <input type="hidden" name="pickup_point_id" value={pointId} />
-      <p className="field__help">Horario general del establecimiento. Es informativo: no sustituye a la ventana de recogida FUERZA.</p>
+      <p className="field__help">Horario general del establecimiento. Es informativo: no sustituye a la ventana de recogida.</p>
       {WEEKDAY_LABELS_ES.map((label, i) => {
         const weekday = i + 1;
         const row = byWeekday(weekday);
@@ -127,7 +127,7 @@ export function CollectionWindowsForm({ pointId, windows }: { pointId: string; w
   return (
     <form action={action} className="admin-form">
       <input type="hidden" name="pickup_point_id" value={pointId} />
-      <p className="field__help">Cuándo se puede recoger un pedido FUERZA en este punto. Puede haber más de una ventana el mismo día.</p>
+      <p className="field__help">Cuándo se puede recoger un pedido en este punto. Puede haber más de una ventana el mismo día.</p>
       {rows.map((row, i) => (
         <div key={i} className="admin-fieldset">
           <Select id={`window-weekday-${i}`} name={`window_weekday_${i}`} label="Día" defaultValue={row?.weekday ?? ""}>

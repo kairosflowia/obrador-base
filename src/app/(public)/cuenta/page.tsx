@@ -18,7 +18,12 @@ import { createPageMetadata } from "@/lib/seo";
 import { getBrandSettings } from "@/lib/brand/get-brand-settings";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return createPageMetadata({ title: "Mi FUERZA", description: "Tu próxima recogida, tus pedidos y tu Fuerza Habitual, en un mismo sitio.", path: "/cuenta" });
+  const siteConfig = await getBrandSettings();
+  return createPageMetadata({
+    title: `Mi ${siteConfig.brand.shortName}`,
+    description: `Tu próxima recogida, tus pedidos y tu ${siteConfig.content.subscriptions.name}, en un mismo sitio.`,
+    path: "/cuenta",
+  });
 }
 
 function initialsFor(name: string, email: string) {
@@ -86,7 +91,11 @@ export default async function AccountPage() {
 
   return (
     <main id="main-content">
-      <PageIntro eyebrow="Sesión activa" title="Mi FUERZA" description="Tu próxima recogida, tus pedidos y tu Fuerza Habitual, todo en un mismo sitio." />
+      <PageIntro
+        eyebrow="Sesión activa"
+        title={`Mi ${siteConfig.brand.shortName}`}
+        description={`Tu próxima recogida, tus pedidos y tu ${siteConfig.content.subscriptions.name}, todo en un mismo sitio.`}
+      />
       <Section>
         <Container size="wide">
           <div className="account-shell">
@@ -122,7 +131,7 @@ export default async function AccountPage() {
               </section>
 
               {siteConfig.features.subscriptions ? <section className="account-section">
-                <p className="account-section__eyebrow">Fuerza Habitual</p>
+                <p className="account-section__eyebrow">{siteConfig.content.subscriptions.name}</p>
                 <h2>Tus membresías</h2>
                 <AccountSubscriptionsCard subscriptions={subscriptionSummaries} />
               </section> : null}
