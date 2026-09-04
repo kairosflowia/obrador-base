@@ -12,6 +12,7 @@
     "test:e2e": "playwright test",
     "security:check": "vitest run src/lib/phase-thirteen.test.ts",
     "backup:validate": "node scripts/validate-backup.mjs",
+    "create-demo": "node scripts/create-demo.mjs",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "db:reset": "supabase db reset",
