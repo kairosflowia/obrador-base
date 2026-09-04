@@ -75,6 +75,7 @@ export const adminNavigation = [
   { slug: "suscripciones", label: "Suscripciones", shortLabel: "Planes", description: "Gestiona el Plan de Pan y sus entregas.", group: "negocio", icon: "repeat" },
   { slug: "mensajes", label: "Mensajes", shortLabel: "Mensajes", description: "Consultas recibidas desde el formulario de contacto.", group: "negocio", icon: "mail" },
   { slug: "comunicaciones", label: "Comunicaciones", shortLabel: "Avisos", description: "Consulta la cola, entregas y fallos transaccionales.", group: "negocio", icon: "mail" },
+  { slug: "inicio-configuracion", label: "Puesta en marcha", shortLabel: "Inicio", description: "Asistente para preparar el portal de un cliente nuevo.", group: "configuracion", icon: "flag", href: "/admin/configuracion/inicio" },
   { slug: "contenido", label: "Contenido", shortLabel: "Contenido", description: "Mantén los textos e imágenes institucionales permitidos.", group: "configuracion", icon: "document" },
   { slug: "marca", label: "Marca", shortLabel: "Marca", description: "Identidad visual, contacto y textos institucionales del portal.", group: "configuracion", icon: "swatch", href: "/admin/configuracion/marca" },
   { slug: "funcionalidades", label: "Funcionalidades", shortLabel: "Módulos", description: "Activa o desactiva módulos del portal y consulta sus dependencias.", group: "configuracion", icon: "gear", href: "/admin/configuracion/funcionalidades" },

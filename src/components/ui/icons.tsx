@@ -343,3 +343,12 @@ export function SwatchIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function FlagIcon(props: IconProps) {
+  return (
+    <svg {...baseProps} {...props}>
+      <path d="M5 3v18" />
+      <path d="M5 4h11l-2.5 3.5L16 11H5" />
+    </svg>
+  );
+}

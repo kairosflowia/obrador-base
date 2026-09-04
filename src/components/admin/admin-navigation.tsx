@@ -16,6 +16,7 @@ import {
   ClipboardIcon,
   ClockIcon,
   DocumentIcon,
+  FlagIcon,
   GearIcon,
   MailIcon,
   OvenIcon,
@@ -53,6 +54,7 @@ const NAV_ICONS: Record<AdminNavIcon, (props: SVGProps<SVGSVGElement>) => ReactE
   gear: GearIcon,
   shield: ShieldIcon,
   swatch: SwatchIcon,
+  flag: FlagIcon,
 };
 
 function AdminLinks({ roles, onNavigate }: { roles: readonly AppRole[]; onNavigate?: () => void }) {
