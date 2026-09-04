@@ -116,7 +116,7 @@ export default async function DondeEstamosPage() {
                       </p>
                     ) : null}
 
-                    {link ? <Link className="text-link" href={link} target="_blank" rel="noopener noreferrer">Cómo llegar</Link> : null}
+                    {link && !(point.latitude != null && point.longitude != null) ? <Link className="text-link" href={link} target="_blank" rel="noopener noreferrer">Cómo llegar</Link> : null}
                   </Card>
                 );
               })}
