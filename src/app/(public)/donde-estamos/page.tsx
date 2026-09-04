@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, EmptyState } from "@/components/ui";
 import { Container, Section } from "@/components/ui/layout";
 import { PageIntro } from "@/components/public/page-intro";
+import { LocationMap } from "@/components/public/location-map";
 import {
   PICKUP_EXCEPTION_TYPE_LABELS_ES,
   PICKUP_POINT_STATUS_LABELS_ES,
@@ -78,21 +79,26 @@ export default async function DondeEstamosPage() {
                     {point.status === "coming_soon" ? <p><strong>{PICKUP_POINT_STATUS_LABELS_ES.coming_soon}</strong></p> : null}
                     {address ? <p>{address}{point.city ? `, ${point.city}` : ""}</p> : point.city ? <p>{point.city}</p> : null}
 
-                    {generalHours.length ? (
-                      <div>
-                        <p><strong>Horario del establecimiento</strong></p>
-                        <ul>{generalHours.map((h) => h && <li key={h.label}>{h.label}: {h.text}</li>)}</ul>
-                      </div>
-                    ) : null}
+                    <div className="location-schedule">
+                      <div className="location-schedule__hours">
+                        {generalHours.length ? (
+                          <div>
+                            <p><strong>Horario del establecimiento</strong></p>
+                            <ul>{generalHours.map((h) => h && <li key={h.label}>{h.label}: {h.text}</li>)}</ul>
+                          </div>
+                        ) : null}
 
-                    {windowsByDay.length ? (
-                      <div>
-                        <p><strong>Días y franjas de recogida</strong></p>
-                        <ul>{windowsByDay.map((day) => <li key={day.label}>{day.label}: {day.ranges.join(", ")}</li>)}</ul>
+                        {windowsByDay.length ? (
+                          <div>
+                            <p><strong>Días y franjas de recogida</strong></p>
+                            <ul>{windowsByDay.map((day) => <li key={day.label}>{day.label}: {day.ranges.join(", ")}</li>)}</ul>
+                          </div>
+                        ) : (
+                          <p>Todavía no hay franjas de recogida publicadas para este punto.</p>
+                        )}
                       </div>
-                    ) : (
-                      <p>Todavía no hay franjas de recogida publicadas para este punto.</p>
-                    )}
+                      {address ? <LocationMap address={`${address}${point.city ? `, ${point.city}` : ""}`} /> : null}
+                    </div>
 
                     {point.public_instructions ? <p>{point.public_instructions}</p> : null}
 

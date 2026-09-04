@@ -98,7 +98,7 @@ export const contentConfig = {
   },
   location: {
     seo: { title: "Dónde estamos", description: "Consulta la ubicación del obrador y sus puntos y horarios de recogida." },
-    intro: { eyebrow: "Visítanos", title: "Dónde estamos", withPoints: "Puedes recoger tu pan en el obrador o en nuestros puntos de recogida. Consulta los días y horarios de cada uno.", withoutPoints: "Estamos preparando la información del obrador y sus próximos puntos de recogida." },
+    intro: { eyebrow: "Visítanos", title: "Dónde estamos", withPoints: "Puedes recoger tu pan en el obrador o en nuestros puntos de recogida. Consulta los días y horarios de cada uno.", withoutPoints: "Puedes recoger tu pan en el obrador. Consulta la ubicación y los horarios a continuación." },
     callout: { eyebrow: "Antes de venir", title: "Cada punto tiene sus propios horarios", description: "Tu reserva indicará el lugar, el día y la franja de recogida disponibles para tu pedido.", action: "Cómo funciona la recogida" },
   },
   newsletter: {
