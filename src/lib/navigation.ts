@@ -4,7 +4,7 @@ import { isAdminSectionEnabled } from "@/lib/features";
 
 export const publicNavigation = [
   { label: "Inicio", href: "/" },
-  { label: "Pan", href: "/pan", feature: "catalog" },
+  { label: "El Obrador", href: "/obrador", feature: "catalog" },
   { label: "Reserva y recoge", href: "/reserva-y-recoge", feature: "onlineOrders" },
   { label: siteConfig.content.subscriptions.name, href: "/plan-de-pan", feature: "subscriptions" },
   { label: "Dónde estamos", href: "/donde-estamos", feature: "pickupPoints" },
@@ -14,7 +14,7 @@ export const publicNavigation = [
 export function getVisiblePublicNavigation(brand: SiteConfig) {
   const items = [
     { label: "Inicio", href: "/" },
-    { label: "Pan", href: "/pan", feature: "catalog" },
+    { label: "El Obrador", href: "/obrador", feature: "catalog" },
     { label: "Reserva y recoge", href: "/reserva-y-recoge", feature: "onlineOrders" },
     { label: brand.content.subscriptions.name, href: "/plan-de-pan", feature: "subscriptions" },
     { label: "Dónde estamos", href: "/donde-estamos", feature: "pickupPoints" },
