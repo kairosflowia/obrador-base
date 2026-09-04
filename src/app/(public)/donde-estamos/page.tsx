@@ -56,10 +56,11 @@ export default async function DondeEstamosPage() {
       {ordered.length ? (
         <Section>
           <Container>
-            <div className="editorial-grid editorial-grid--two">
+            <div className="location-points">
               {ordered.map((point) => {
                 const link = directionsUrl(point);
                 const address = [point.address_line_1, point.address_line_2].filter(Boolean).join(", ");
+                const hasCoords = point.latitude != null && point.longitude != null;
                 const windowsByDay = WEEKDAY_LABELS_ES.map((label, i) => {
                   const weekday = i + 1;
                   const dayWindows = point.collectionWindows.filter((w) => w.weekday === weekday);
@@ -73,51 +74,52 @@ export default async function DondeEstamosPage() {
                 }).filter(Boolean);
 
                 return (
-                  <Card key={point.id} className={point.is_main_bakery ? "editorial-card editorial-card--ink" : "editorial-card"}>
-                    <p className="eyebrow">{point.type === "bakery" ? "Obrador principal" : "Punto de recogida"}</p>
-                    <h2>{point.name}</h2>
-                    {point.status === "coming_soon" ? <p><strong>{PICKUP_POINT_STATUS_LABELS_ES.coming_soon}</strong></p> : null}
-                    {address ? <p>{address}{point.city ? `, ${point.city}` : ""}</p> : point.city ? <p>{point.city}</p> : null}
+                  <div className="location-points__row" key={point.id}>
+                    <Card className={point.is_main_bakery ? "editorial-card editorial-card--ink" : "editorial-card"}>
+                      <p className="eyebrow">{point.type === "bakery" ? "Obrador principal" : "Punto de recogida"}</p>
+                      <h2>{point.name}</h2>
+                      {point.status === "coming_soon" ? <p><strong>{PICKUP_POINT_STATUS_LABELS_ES.coming_soon}</strong></p> : null}
+                      {address ? <p>{address}{point.city ? `, ${point.city}` : ""}</p> : point.city ? <p>{point.city}</p> : null}
 
-                    <div className="location-schedule">
-                      <div className="location-schedule__hours">
-                        {generalHours.length ? (
-                          <div>
-                            <p><strong>Horario del establecimiento</strong></p>
-                            <ul>{generalHours.map((h) => h && <li key={h.label}>{h.label}: {h.text}</li>)}</ul>
-                          </div>
-                        ) : null}
+                      {generalHours.length ? (
+                        <div>
+                          <p><strong>Horario del establecimiento</strong></p>
+                          <ul>{generalHours.map((h) => h && <li key={h.label}>{h.label}: {h.text}</li>)}</ul>
+                        </div>
+                      ) : null}
 
-                        {windowsByDay.length ? (
-                          <div>
-                            <p><strong>Días y franjas de recogida</strong></p>
-                            <ul>{windowsByDay.map((day) => <li key={day.label}>{day.label}: {day.ranges.join(", ")}</li>)}</ul>
-                          </div>
-                        ) : (
-                          <p>Todavía no hay franjas de recogida publicadas para este punto.</p>
-                        )}
-                      </div>
-                      {point.latitude != null && point.longitude != null ? (
+                      {windowsByDay.length ? (
+                        <div>
+                          <p><strong>Días y franjas de recogida</strong></p>
+                          <ul>{windowsByDay.map((day) => <li key={day.label}>{day.label}: {day.ranges.join(", ")}</li>)}</ul>
+                        </div>
+                      ) : (
+                        <p>Todavía no hay franjas de recogida publicadas para este punto.</p>
+                      )}
+
+                      {point.public_instructions ? <p>{point.public_instructions}</p> : null}
+
+                      {point.upcomingException ? (
+                        <p>
+                          <strong>{PICKUP_EXCEPTION_TYPE_LABELS_ES[point.upcomingException.type]}</strong> el {point.upcomingException.exception_date}
+                          {point.upcomingException.public_message ? `: ${point.upcomingException.public_message}` : ""}
+                        </p>
+                      ) : null}
+
+                      {link && !hasCoords ? <Link className="text-link" href={link} target="_blank" rel="noopener noreferrer">Cómo llegar</Link> : null}
+                    </Card>
+
+                    {hasCoords ? (
+                      <Card className="editorial-card location-points__map-card">
                         <LocationMap
-                          latitude={point.latitude}
-                          longitude={point.longitude}
+                          latitude={point.latitude!}
+                          longitude={point.longitude!}
                           address={`${address}${point.city ? `, ${point.city}` : ""}`}
                           directionsHref={link}
                         />
-                      ) : null}
-                    </div>
-
-                    {point.public_instructions ? <p>{point.public_instructions}</p> : null}
-
-                    {point.upcomingException ? (
-                      <p>
-                        <strong>{PICKUP_EXCEPTION_TYPE_LABELS_ES[point.upcomingException.type]}</strong> el {point.upcomingException.exception_date}
-                        {point.upcomingException.public_message ? `: ${point.upcomingException.public_message}` : ""}
-                      </p>
+                      </Card>
                     ) : null}
-
-                    {link && !(point.latitude != null && point.longitude != null) ? <Link className="text-link" href={link} target="_blank" rel="noopener noreferrer">Cómo llegar</Link> : null}
-                  </Card>
+                  </div>
                 );
               })}
             </div>
